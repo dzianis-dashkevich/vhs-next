@@ -3,7 +3,8 @@ TBD: table of content
 
 # Summary
 
-TBD: Describe summary
+This documents describes a high level solution design for the VHS-Next (videojs playback engine) project.
+This project is as a pre-requisite for a massive videojs 9 update.
 
 # Motivation
 
