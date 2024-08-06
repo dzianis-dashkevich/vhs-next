@@ -52,7 +52,40 @@ This new engine will not only resolve the current deficiencies but also provide 
 
 # Monorepo Structure
 
-TBD: Describe Monorepo setup with a connection to the future videojs work
+The vhs-next and future videojs 9 related repositories should be encapsulated in one `@videojs` scoped monorepo.
+
+We already have @videojs scoped monorepo under the "web-media-box" repository:
+https://github.com/videojs/web-media-box
+
+> Note:
+> 
+> "web-media-box" or simply "wmb" is just a fancy name for the repository. 
+> 
+> The actual packages are @videojs scoped.
+> 
+> We can rename it to the "videojs-monorepo" or keep existing name as a legacy to the 13th Hack-Week.
+
+Here is monorepo structure example:
+
+```shell
+├── ...
+├── packages
+│   ├── ...
+│   ├── dash-parser (@videojs/dash-parser)
+│   ├── hls-parser  (@videojs/hls-parser)
+│   ├── playback    (@videojs/playback)
+│   ├── ui          (@videojs/ui)
+│   └── videojs.dev (app)
+├── package.json
+├── nx.json
+└── tsconfig.json
+
+
+
+```
+
+ TBD: add a note about focused scope and which repos we are planning to deprecate/archive and why.
+
 
 # Functional Requirements
 
