@@ -4,6 +4,14 @@
 * [Motivation](#motivation)
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
+  * [HLS Features](#hls-features)
+    * [HLS MPEG-2 Transport Stream](#hls-mpeg-2-transport-stream)
+    * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
+  * [Dash Features](#dash-features)
+  * [Server-Client Signaling](#server-client-signaling)
+    * [Content Steering](#content-steering)
+    * [Common-Media-Client-Data (CMCD)](#common-media-client-data-cmcd)
+    * [Common-Media-Server-Data (CMSD)](#common-media-server-data-cmsd)
 * [Non-Functional Requirements](#non-functional-requirements)
 * [Entities](#entities)
 * [Scenarios](#scenarios)
@@ -109,11 +117,43 @@ The following existing public packages should be deprecated and archived after `
 
 # Functional Requirements
 
+## HLS Features
+
+### HLS MPEG-2 Transport Stream
+
+> ℹ️ **Priority: MUST**
+> 
+> While the community is moving toward HLS CMAF, mpeg2-ts is still massively presented, so we have to support it.
+
+|        | URLS                                                                                    |
+|--------|-----------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.1         |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/transmuxer/ts_transmuxer.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/tsdemuxer.ts                  |
+
+### HLS Common Media Application Format (CMAF)
+
+> ℹ️ **Priority: MUST**
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.2     |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3431 |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L540      |
+
+
+## Dash Features
+
+## Server-Client Signaling
+
+### Content Steering
+
+### Common-Media-Client-Data (CMCD)
+
+### Common-Media-Server-Data (CMSD)
 
 | Feature                                    | Spec                                                                                                                                                                                                                  | Shaka                                                                                                                | hls.js                                                                                        | dash.js                                                                                                           | Notes                                                                                                                   | Priority |
 |--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|----------|
-| HLS MPEG-2 Transport Stream                | [rfc-8216:section-3.1.1](https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.1)                                                                                                             | Shaka NO longer uses mux.js: https://github.com/shaka-project/shaka-player/blob/main/lib/transmuxer/ts_transmuxer.js | https://github.com/video-dev/hls.js/blob/master/src/demux/tsdemuxer.ts                        | N/A                                                                                                               | While community moving toward hls CMAF, mpeg2-ts is still massively presented, so we have to support it.                | MUST     |
-| HLS Common Media Application Format (CMAF) | [rfc-8216:section-3.1.2](https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.2)                                                                                                             | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3431                                  | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L540                | N/A                                                                                                               | N/A                                                                                                                     | MUST     |
 | Common-Media-Client-Data (CMCD)            | [cta-5004](https://cdn.cta.tech/cta/media/media/resources/standards/pdfs/cta-5004-final.pdf)                                                                                                                          | https://github.com/shaka-project/shaka-player/blob/main/lib/util/cmcd_manager.js                                     | https://github.com/video-dev/hls.js/blob/master/src/controller/cmcd-controller.ts             | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmcdModel.js                 | All major open source players support this feature. We may consider re-using `@svta/common-media-library/cmsd` utils.   | SHOULD   |
 | Common-Media-Server-Data (CMSD)            | [cta-5006](https://cdn.cta.tech/cta/media/media/resources/standards/pdfs/cta-5006-final.pdf)                                                                                                                          | https://github.com/shaka-project/shaka-player/blob/main/lib/util/cmsd_manager.js                                     | Not Implemented                                                                               | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmsdModel.js                 | Limited support in shaka and dash.js. Mainly for abr. We may consider re-using `@svta/common-media-library/cmsd` utils. | SHOULD   |
 | Content Steering                           | [hls-content-steering](https://developer.apple.com/streaming/HLSContentSteeringSpecification.pdf) <br/> <br/> [dash-content-steering](https://dashif.org/docs/DASH-IF-CTS-00XX-Content-Steering-Community-Review.pdf) | https://github.com/shaka-project/shaka-player/blob/main/lib/util/content_steering_manager.js                         | https://github.com/video-dev/hls.js/blob/master/src/controller/content-steering-controller.ts | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/dash/controllers/ContentSteeringController.js | All major open source players support this feature.                                                                     | SHOULD   |
