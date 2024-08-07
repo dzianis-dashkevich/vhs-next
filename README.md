@@ -7,6 +7,8 @@
   * [HLS Features](#hls-features)
     * [HLS MPEG-2 Transport Stream](#hls-mpeg-2-transport-stream)
     * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
+    * [HLS WebVTT](#hls-webvtt)
+    * [HLS IMSC Subtitles](#hls-imsc-subtitles)
     * [HLS In-manifest thumbnails](#hls-in-manifest-thumbnails)
   * [Dash Features](#dash-features)
     * [DASH In-manifest thumbnails](#dash-in-manifest-thumbnails)
