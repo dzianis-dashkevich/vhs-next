@@ -17,7 +17,7 @@ This project is as a pre-requisite for a massive videojs 9 update.
 
 # Motivation
 
-The current playback engine (VHS and it's ecosystem: m3u8-parser, mpd-parser, mux.js, contrib-eme) has reached a critical point where it's issues significantly impede both maintenance and innovation.
+The current playback engine (VHS and it's ecosystem: m3u8-parser, mpd-parser, mux.js, contrib-eme, etc...) has reached a critical point where it's issues significantly impede both maintenance and innovation.
 
 These challenges have escalated the effort required to support and enhance the existing codebase.
 
@@ -52,9 +52,9 @@ This new engine will not only resolve the current deficiencies but also provide 
 
 # Monorepo Structure
 
-The vhs-next and future videojs 9 related repositories should be encapsulated in one `@videojs` scoped monorepo.
+The vhs-next and future videojs 9 related repositories should live in one `@videojs` scoped monorepo.
 
-We already have @videojs scoped monorepo under the "web-media-box" repository:
+We already have `@videojs/*` scoped monorepo under the `web-media-box` repository:
 https://github.com/videojs/web-media-box
 
 > ⚠️ **Note**
@@ -109,7 +109,11 @@ The following existing public packages should be deprecated and archived after `
 
 # Functional Requirements
 
-TBD: Describe Functional Requirements with links, samples from different open source players, etc...
+| Feature                         | Spec                                                                             | Shaka                                                                            | hls.js                                                                            | dash.js                                                                                           | Notes                                                                                                                                                                      | Must | Should | Could |
+|---------------------------------|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|--------|-------|
+| Common-Media-Client-Data (CMCD) | https://cdn.cta.tech/cta/media/media/resources/standards/pdfs/cta-5004-final.pdf | https://github.com/shaka-project/shaka-player/blob/main/lib/util/cmcd_manager.js | https://github.com/video-dev/hls.js/blob/master/src/controller/cmcd-controller.ts | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmcdModel.js | All major open source players support this feature, and implementation should be pretty straightforward. We can consider re-using `@svta/common-media-library/cmsd` utils. |      | SHOULD |       |
+| Common-Media-Server-Data (CMSD) | https://cdn.cta.tech/cta/media/media/resources/standards/pdfs/cta-5006-final.pdf | https://github.com/shaka-project/shaka-player/blob/main/lib/util/cmsd_manager.js | Not Implemented                                                                   | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmsdModel.js |                                                                                                                                                                            |      |        |       |
+
 
 # Non-Functional Requirements
 
