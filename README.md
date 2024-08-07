@@ -143,6 +143,38 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3431 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L540      |
 
+
+### HLS WebVTT
+
+> ℹ️ **Priority: MUST**
+
+> ⚠️ **Note**
+>
+> HLS WeVTT is not encapsulated in fmp4 and timestamp sync is implemented via X-TIMESTAMP-MAP
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.4     |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/text/vtt_text_parser.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/webvtt-parser.ts          |
+
+
+### HLS IMSC Subtitles
+
+> ℹ️ **Priority: MUST**
+
+
+> ⚠️ **Note**
+>
+>
+> HLS IMSC is encapsulated in fmp4.
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.5     |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/text/mp4_ttml_parser.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/imsc1-ttml-parser.ts      |
+
 ### HLS In-manifest thumbnails
 
 > ℹ️ **Priority: COULD**
