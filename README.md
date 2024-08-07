@@ -57,35 +57,55 @@ The vhs-next and future videojs 9 related repositories should be encapsulated in
 We already have @videojs scoped monorepo under the "web-media-box" repository:
 https://github.com/videojs/web-media-box
 
-> Note:
-> 
-> "web-media-box" or simply "wmb" is just a fancy name for the repository. 
-> 
-> The actual packages are @videojs scoped.
-> 
-> We can rename it to the "videojs-monorepo" or keep existing name as a legacy to the 13th Hack-Week.
+> ⚠️ **Note**
+>
+> `web-media-box` or simply `wmb` is just a fancy name for the repository.
+>
+> The actual packages are `@videojs/*` scoped.
+>
+> We can rename it to any other name (eg: `videojs-monorepo`) or keep existing name as a legacy to the 13th Hack-Week.
 
 Here is monorepo structure example:
 
-```shell
+```
 ├── ...
 ├── packages
 │   ├── ...
-│   ├── dash-parser (@videojs/dash-parser)
-│   ├── hls-parser  (@videojs/hls-parser)
-│   ├── playback    (@videojs/playback)
-│   ├── ui          (@videojs/ui)
-│   └── videojs.dev (app)
-├── package.json
-├── nx.json
-└── tsconfig.json
-
-
+│   ├── transport-stream-parser (@videojs/transport-stream-parser)
+│   ├── iso-bmff-parser         (@videojs/iso-bmff-parser)
+│   ├── dash-parser             (@videojs/dash-parser)
+│   ├── hls-parser              (@videojs/hls-parser)
+│   ├── playback                (@videojs/playback)
+│   ├── ui                      (@videojs/ui)
+│   └── videojs.dev             (app, private: true)
+├── package.json                (workspaces: [packages/*], private: true)
+├── nx.json                     (shared NX configuration)
+└── tsconfig.json               (shared TS configuration)
 
 ```
 
- TBD: add a note about focused scope and which repos we are planning to deprecate/archive and why.
+As you can see from this structure, videojs scoped monorepo will have 2 main repositories:
+`@videojs/playback` and `@videojs/ui` and a bunch of additional libraries that can be used as standalone libs + videojs related apps.
 
+`@videojs/playback` is a standalone player that handles playback and does not support UI. (Similar to hls.js and dash.js).
+
+`@videojs/ui` is a standalone UI player that uses `@videojs/playback` under the hood and provides a lot of UI WebComponents to customize your player. (Something similar to https://www.vidstack.io/)
+
+This way we cover both groups of developers:
+- Developers who want to build their own player's UI on top of `@videojs/playback`
+- Developers who want embedded player experience
+
+This documents covers only `@videojs/playback` and other playback-related utility packages.
+
+The following existing public packages should be deprecated and archived after `@videojs/playback` is fully developed:
+- https://github.com/videojs/http-streaming
+- https://github.com/videojs/videojs-contrib-eme
+- https://github.com/videojs/vhs-utils
+- https://github.com/videojs/m3u8-parser
+- https://github.com/videojs/mux.js
+- https://github.com/videojs/videojs-contrib-quality-levels
+- https://github.com/videojs/mpd-parser
+- https://github.com/videojs/aes-decrypter
 
 # Functional Requirements
 
