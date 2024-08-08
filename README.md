@@ -5,10 +5,18 @@
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
   * [HLS Features](#hls-features)
+    * [HLS VOD](#hls-vod)
+    * [HLS Live](#hls-live)
+    * [HLS Live DVR window](#hls-live-dvr-window)
+    * [HLS Alternative Audio support (when main is muxed)](#hls-alternative-audio-support-when-main-is-muxed)
+    * [HLS Live Low Latency](#hls-live-low-latency)
+    * [HLS Byte Range](#hls-byte-range)
+    * [HLS In-Manifest Timed Metadata (via ext-x-dateRange)](#hls-in-manifest-timed-metadata-via-ext-x-daterange)
     * [HLS MPEG-2 Transport Stream](#hls-mpeg-2-transport-stream)
     * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
     * [HLS WebVTT](#hls-webvtt)
     * [HLS IMSC Subtitles](#hls-imsc-subtitles)
+    * [HLS Variable Substitution](#hls-variable-substitution)
     * [HLS Interstitial](#hls-interstitial)
     * [HLS Trick Play](#hls-trick-play)
     * [HLS In-manifest thumbnails (ext-x-iframes-only)](#hls-in-manifest-thumbnails-ext-x-iframes-only)
@@ -126,6 +134,53 @@ The following existing public packages should be deprecated and archived after `
 
 ## HLS Features
 
+
+### HLS VOD
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+### HLS Live
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+### HLS Live DVR window
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+> ⚠️ **Note**
+>
+> Must support proper seekable API
+
+### HLS Alternative Audio support (when main is muxed)
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+
+### HLS Live Low Latency
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.2       |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3592 |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L595      |
+
+
+### HLS Byte Range
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.4.2   |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3647 |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L388      |
+
+
+### HLS In-Manifest Timed Metadata (via ext-x-dateRange)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.5.1   |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3874 |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/date-range.ts            |
+
+
 ### HLS MPEG-2 Transport Stream
 
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
@@ -176,6 +231,16 @@ The following existing public packages should be deprecated and archived after `
 | Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.5     |
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/text/mp4_ttml_parser.js |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/imsc1-ttml-parser.ts      |
+
+### HLS Variable Substitution
+
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+
+|        | URLS                                                                               |
+|--------|------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.3      |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_utils.js#L115  |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/variable-substitution.ts |
 
 ### HLS Interstitial
 
