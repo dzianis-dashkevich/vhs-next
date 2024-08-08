@@ -128,7 +128,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS MPEG-2 Transport Stream
 
-> ℹ️ **Priority: MUST**
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 > 
 > While the community is moving toward HLS CMAF, mpeg2-ts is still massively presented, so we have to support it.
 
@@ -140,7 +140,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS Common Media Application Format (CMAF)
 
-> ℹ️ **Priority: MUST**
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -150,7 +150,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS WebVTT
 
-> ℹ️ **Priority: MUST**
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 > ⚠️ **Note**
 >
@@ -164,8 +164,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS IMSC Subtitles
 
-> ℹ️ **Priority: MUST**
-
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
 
 > ⚠️ **Note**
 >
@@ -180,7 +179,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS Interstitial
 
-> ℹ️ **Priority: COULD**
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Content producers can insert separate interstitial content into their
 > primary presentations in order to display advertising, branding, or
@@ -196,7 +195,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS Trick Play
 
-> ℹ️ **Priority: COULD**
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Trick play could be implemented via Ext-x-iframes-only playlists
 
@@ -209,7 +208,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS In-manifest thumbnails (ext-x-iframes-only)
 
-> ℹ️ **Priority: COULD**
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Official In-manifest support via Ext-x-iframes-only playlists with mjpg codec
 
@@ -221,7 +220,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS In-manifest thumbnails (Roku spec)
 
-> ℹ️ **Priority: COULD**
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 > 
 > It is unofficial spec, but nice to have.
 
@@ -235,7 +234,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### DASH In-manifest thumbnails
 
-> ℹ️ **Priority: COULD**
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 
 |         | URLS                                                                                                       |
 |---------|------------------------------------------------------------------------------------------------------------|
@@ -247,7 +246,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### Content Steering
 
-> ℹ️ **Priority: SHOULD**
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 >
 > All major open source players support this feature.
 
@@ -262,7 +261,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### Common-Media-Client-Data (CMCD)
 
-> ℹ️ **Priority: SHOULD**
+> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS*)
 > 
 > All major open source players support this feature. We may consider re-using `@svta/common-media-library/cmcd/*` utils.
 
@@ -275,7 +274,7 @@ The following existing public packages should be deprecated and archived after `
 
 ### Common-Media-Server-Data (CMSD)
 
-> ℹ️ **Priority: SHOULD**
+> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS*)
 >
 > Limited support in shaka and dash.js. Mainly for abr. We may consider re-using `@svta/common-media-library/cmsd/*` utils.
 
