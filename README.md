@@ -165,6 +165,15 @@ The following existing public packages should be deprecated and archived after `
 
 # Functional Requirements
 
+| Name                                       | VHS (current) | Priority | Notes                                                               | References |
+|--------------------------------------------|---------------|----------|---------------------------------------------------------------------|------------|
+| HLS                                        |               |          |                                                                     |            |
+| HLS VOD                                    | YES           | MUST     | N/A                                                                 | N/A        |
+| HLS Live                                   | YES           | MUST     | N/A                                                                 | N/A        |
+| HLS Live DVR                               | YES           | MUST     | Must support proper `seekable` API                                  | N/A        |
+| HLS Alternative Audio (when main is muxed) | NO            | MUST     | If alternative audio is enabled, in-segment audio should be ignored | N/A        |
+
+
 ## HLS Features
 
 ### HLS VOD
@@ -434,15 +443,40 @@ The following existing public packages should be deprecated and archived after `
 
 ## DRM
 
+|         | URLS                                                                                     |
+|---------|------------------------------------------------------------------------------------------|
+| Spec    | https://www.w3.org/TR/encrypted-media/                                                   |
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/media/drm_engine.js          |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/tree/development/src/streaming/protection |
+| hls.js  | https://github.com/video-dev/hls.js/blob/master/src/controller/eme-controller.ts         |
+
 ### Widevine
+
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 ### Fairplay
 
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
 ### Fairplay (Legacy)
 
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+> ⚠️ **Note**
+>
+> Legacy Fairplay is not aligned with the current version of the EME spec
+> 
+> we should use polyfill based approach, see shaka's impl:
+> 
+> https://github.com/shaka-project/shaka-player/blob/main/lib/polyfill/patchedmediakeys_apple.js
+> 
+> https://github.com/shaka-project/shaka-player/blob/main/lib/polyfill/patchedmediakeys_webkit.js
+
 ### PlayReady
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 ### ClearKey
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 
 ## Container Support
 
@@ -450,21 +484,29 @@ The following existing public packages should be deprecated and archived after `
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 > 
 > Transmux to MP4
+> 
+> see hls mpeg-2 ts and aac sections
 
 ### MPEG-2 TS AC3 (Audio Codec)
 > ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Transmux to MP4
+>
+> see hls mpeg-2 ts and ac3 sections
 
 ### MPEG-2 TS EC3 (Audio Codec)
 > ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Transmux to MP4
+>
+> see hls mpeg-2 ts and ec3 sections
 
 ### MPEG-2 TS MP3 (Audio Codec)
 > ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
 >
 > Transmux to MP4
+>
+> see hls mpeg-2 ts and mp3 sections
 
 ### MPEG-2 TS Opus (Audio Codec)
 > ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
