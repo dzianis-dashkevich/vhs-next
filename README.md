@@ -9,7 +9,10 @@
     * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
     * [HLS WebVTT](#hls-webvtt)
     * [HLS IMSC Subtitles](#hls-imsc-subtitles)
-    * [HLS In-manifest thumbnails](#hls-in-manifest-thumbnails)
+    * [HLS Interstitial](#hls-interstitial)
+    * [HLS Trick Play](#hls-trick-play)
+    * [HLS In-manifest thumbnails (ext-x-iframes-only)](#hls-in-manifest-thumbnails-ext-x-iframes-only)
+    * [HLS In-manifest thumbnails (Roku spec)](#hls-in-manifest-thumbnails-roku-spec)
   * [Dash Features](#dash-features)
     * [DASH In-manifest thumbnails](#dash-in-manifest-thumbnails)
   * [Server-Client Signaling](#server-client-signaling)
@@ -145,7 +148,6 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3431 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L540      |
 
-
 ### HLS WebVTT
 
 > ℹ️ **Priority: MUST**
@@ -159,7 +161,6 @@ The following existing public packages should be deprecated and archived after `
 | Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.4     |
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/text/vtt_text_parser.js |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/webvtt-parser.ts          |
-
 
 ### HLS IMSC Subtitles
 
@@ -177,7 +178,48 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/text/mp4_ttml_parser.js |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/utils/imsc1-ttml-parser.ts      |
 
-### HLS In-manifest thumbnails
+### HLS Interstitial
+
+> ℹ️ **Priority: COULD**
+>
+> Content producers can insert separate interstitial content into their
+> primary presentations in order to display advertising, branding, or
+> other information to viewers. It is implemented via EXT-X-DATERANGE
+> 
+> Shaka has limited support
+
+|        | URLS                                                                         |
+|--------|------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#appendix-D |
+| Shaka  | Check this PR: https://github.com/shaka-project/shaka-player/pull/6761       |
+| hls.js | Not Implemented                                                              |
+
+### HLS Trick Play
+
+> ℹ️ **Priority: COULD**
+>
+> Trick play could be implemented via Ext-x-iframes-only playlists
+
+|        | URLS                                                                              |
+|--------|-----------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.3.6 |
+| Shaka  | Not Implemented                                                                   |
+| hls.js | Not Implemented                                                                   |
+
+
+### HLS In-manifest thumbnails (ext-x-iframes-only)
+
+> ℹ️ **Priority: COULD**
+>
+> Official In-manifest support via Ext-x-iframes-only playlists with mjpg codec
+
+|        | URLS                                                                               |
+|--------|------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.3.6  |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L933 |
+| hls.js | Not Implemented                                                                    |
+
+### HLS In-manifest thumbnails (Roku spec)
 
 > ℹ️ **Priority: COULD**
 > 

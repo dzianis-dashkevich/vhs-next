@@ -1,0 +1,19 @@
+HLS features supported:
+
+VOD, Live, and Event types
+Low-latency streaming with partial segments, preload hints, delta updates and blocking playlist reload
+Discontinuity
+ISO-BMFF / MP4 / CMAF support
+MPEG-2 TS support (DONE)
+WebVTT and TTML (DONE)
+CEA-608/708 captions (SHOULD NOT BE HERE BUT RATHER ON FORMAT LEVEL SUPPORT)
+Encrypted content with PlayReady and Widevine
+Encrypted content with FairPlay (Safari on macOS and iOS 9+ only)
+AES-128, AES-256 and AES-256-CTR support on browsers with Web Crypto API support
+SAMPLE-AES and SAMPLE-AES-CTR (identity) support on browsers with ClearKey support
+Key rotation
+Raw AAC, MP3, AC-3 and EC-3 (without an MP4 container)
+I-frame-only playlists with mjpg codec for thumbnails
+#EXT-X-IMAGE-STREAM-INF for thumbnails (DONE)
+Interstitials (DONE)
+Container change during the playback (eg: MP4 to TS, or AAC to TS) (should be expected)
