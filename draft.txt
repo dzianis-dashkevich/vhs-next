@@ -1,59 +1,160 @@
-HLS features supported:
+HLS.js Features:
 
-Discontinuity
-Encrypted content with PlayReady and Widevine
-Encrypted content with FairPlay (Safari on macOS and iOS 9+ only)
-Key rotation
+VOD & Live playlists
+DVR support on Live playlists
+Fragmented MP4 container
+MPEG-2 TS container
+ITU-T Rec. H.264 and ISO/IEC 14496-10 Elementary Stream
+ITU-T Rec. H.265 and ISO/IEC 23008-2 Elementary Stream
+ISO/IEC 13818-7 ADTS AAC Elementary Stream
+ISO/IEC 11172-3 / ISO/IEC 13818-3 (MPEG-1/2 Audio Layer III) Elementary Stream
+ATSC A/52 / AC-3 / Dolby Digital Elementary Stream
+Packetized metadata (ID3v2.3.0) Elementary Stream
+AAC container (audio only streams)
+MPEG Audio container (MPEG-1/2 Audio Layer III audio only streams)
+Timed Metadata for HTTP Live Streaming (ID3 format carried in MPEG-2 TS, Emsg in CMAF/Fragmented MP4, and DATERANGE playlist tags)
+AES-128 decryption
+"identity" format SAMPLE-AES decryption of MPEG-2 TS segments only
+Encrypted media extensions (EME) support for DRM (digital rights management)
+FairPlay, PlayReady, Widevine CDMs with fmp4 segments
+Level capping based on HTMLMediaElement resolution, dropped-frames, and HDCP-Level
+CEA-608/708 captions
+WebVTT subtitles
+Alternate Audio Track Rendition (Master Playlist with Alternative Audio) for VoD and Live playlists
+Adaptive streaming
+Manual & Auto Quality Switching
+3 Quality Switching modes are available (controllable through API means)
+Instant switching (immediate quality switch at current video position)
+Smooth switching (quality switch for next loaded fragment)
+Bandwidth conservative switching (quality switch change for next loaded fragment, without flushing the buffer)
+In Auto-Quality mode, emergency switch down in case bandwidth is suddenly dropping to minimize buffering.
+Accurate Seeking on VoD & Live (not limited to fragment or keyframe boundary)
+Ability to seek in buffer and back buffer without redownloading segments
+Built-in Analytics
+All internal events can be monitored (Network Events, Video Events)
+Playback session metrics are also exposed
+Resilience to errors
+Retry mechanism embedded in the library
+Recovery actions can be triggered fix fatal media or network errors
+Redundant/Failover Playlists
+HLS Variable Substitution
 
 
-Clear Key:
-#EXT-X-KEY:METHOD=SAMPLE-AES-CTR,URI="data:text/plain;base64,pGMaFTpEPfnu0FkwQ9t1GQ==",KEYFORMAT="identity"
 
-Widevine:
-#EXT-X-KEY:METHOD=SAMPLE-AES-CTR,URI="data:text/plain;base64,AAAAPnBzc2gAAAAA7e+LqXnWSs6jyCfc1R0h7QAAAB4iFnNoYWthX2NlYzJmNjRhYTc4OTBhMTFI49yVmwY=",KEYID=0x800AACAA522958AE888062B5695DB6BF,KEYFORMATVERSIONS="1",KEYFORMAT="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+Shaka HLS features
+      HLS features supported:
 
-Fairplay:
-#EXT-X-KEY:METHOD=SAMPLE-AES,URI="skd://fps.ezdrm.com/;b99ed9e5-c641-49d1-bfa8-43692b686ddb",KEYFORMATVERSIONS="1",KEYFORMAT="com.apple.streamingkeydelivery"
+      VOD, Live, and Event types
+      Low-latency streaming with partial segments, preload hints, delta updates and blocking playlist reload
+      Discontinuity
+      ISO-BMFF / MP4 / CMAF support
+      MPEG-2 TS support
+      WebVTT and TTML
+      CEA-608/708 captions
+      Encrypted content with PlayReady and Widevine
+      Encrypted content with FairPlay (Safari on macOS and iOS 9+ only)
+      AES-128, AES-256 and AES-256-CTR support on browsers with Web Crypto API support
+      SAMPLE-AES and SAMPLE-AES-CTR (identity) support on browsers with ClearKey support
+      Key rotation
+      Raw AAC, MP3, AC-3 and EC-3 (without an MP4 container)
+      I-frame-only playlists with mjpg codec for thumbnails
+      #EXT-X-IMAGE-STREAM-INF for thumbnails
+      Interstitials
+      Container change during the playback (eg: MP4 to TS, or AAC to TS)
+      HLS features not supported:
 
-Key Rotation:
-#EXT-X-KEY:METHOD=AES-128,URI="key0.bin"
-#EXTINF:8.000000,
-segment-1.ts
-#EXTINF:8.000000,
-segment-2.ts
-#EXTINF:8.000000,
-segment-3.ts
-#EXTINF:8.000000,
-segment-4.ts
-#EXTINF:8.000000,
-segment-5.ts
-#EXTINF:8.000000,
-segment-6.ts
-#EXTINF:8.000000,
-segment-7.ts
-#EXTINF:8.000000,
-segment-8.ts
-#EXTINF:8.000000,
-segment-9.ts
-#EXTINF:8.000000,
-segment-10.ts
-#EXT-X-KEY:METHOD=AES-128,URI="key10.bin"
+      X-SNAP attribute in interstitials
+
+Shaka DASH features
+      DASH features supported:
+
+      VOD, Live, and In-Progress Recordings (dynamic VOD content)
+      MPD@timeShiftBufferDepth for seeking backward in Live streams
+      Multi-period content (static and dynamic)
+      Xlink elements (actuate=onLoad only, resolve-to-zero, fallback content)
+      All forms of segment index info: SegmentBase@indexRange, SegmentTimeline, SegmentTemplate@duration, SegmentTemplate@index, SegmentList
+      Multi-codec/multi-container manifests (we will negotiate support with the browser and choose the best ones)
+      Encrypted content (including custom ContentProtection schemas, PSSH in the manifest)
+      Key rotation
+      Trick mode tracks
+      WebVTT and TTML
+      CEA-608/708 captions
+      Multi-codec variants (on platforms with changeType support)
+      MPD chaining
+      MPD Patch updates for SegmentTemplate with Number, SegmentTimeline with Number and SegmentTimeline with Time
+
+      DASH features not supported:
+
+      Xlink with actuate=onRequest
+      Manifests without any segment info: #1088
+      Multiple trick mode tracks for the same resolution at varying framerates or bitrates
+      Timescales so large that timestamps cannot be represented as integers in JavaScript (2^53): #1667
+      Modifying elements with an @schemeIdUri attribute via MPD Patch
+      Xlink dereferencing with MPD Patch
+
+Shaka Media container and subtitle support
+      Shaka Player supports:
+
+      ISO-BMFF / CMAF / MP4
+      Depends on browser support for the container via MediaSource
+      Can parse "sidx" box for DASH's SegmentBase@indexRange and SegmentTemplate@index
+      Can find and parse "tfdt" box to find segment start time in HLS
+      For MSS, codem-isoboxer v0.3.7+ is required
+      WebM
+      Depends on browser support for the container via MediaSource
+      Can parse cueing data elements for DASH's SegmentBase@indexRange and SegmentTemplate@index
+      Not supported in HLS
+      MPEG-2 TS
+      Can be played on any browser which supports MP4
+      Can find and parse timestamps to find segment start time in HLS
+      WebVTT
+      Supported in both text form and embedded in MP4
+      TTML
+      Supported in both XML form and embedded in MP4
+      CEA-608
+      Supported embedded in MP4 and TS
+      CEA-708
+      Supported embedded in MP4 and TS
+      Raw AAC
+      Supported in raw AAC container and transmuxing to AAC in MP4 container (depends on browser support via MediaSource).
+      Raw MP3
+      Supported in raw MP3 container and transmuxing to MP3 in MP4 container (depends on browser support via MediaSource).
+      Raw AC-3
+      Supported in raw AC-3 container and transmuxing to AC-3 in MP4 container (depends on browser support via MediaSource).
+      Raw EC-3
+      Supported in raw EC-3 container and transmuxing to EC-3 in MP4 container (depends on browser support via MediaSource).
+      SubRip (SRT)
+      UTF-8 encoding only
+      LyRiCs (LRC)
+      UTF-8 encoding only
+      SubStation Alpha (SSA, ASS)
+      UTF-8 encoding only
+      SubViewer (SBV)
+      UTF-8 encoding only
 
 
-CEA-608/708 captions (SHOULD NOT BE HERE BUT RATHER ON FORMAT LEVEL SUPPORT)
+Shaka Transmuxer support
+      Shaka Player supports:
 
-Container change during the playback (eg: MP4 to TS, or AAC to TS) (should be expected)
-VOD, Live, and Event types (should be expected)
+      Raw AAC to AAC in MP4 (DONE)
+      Raw MP3 to MP3 in MP4 (DONE)
+      Raw AC-3 to AC-3 in MP4 (DONE)
+      Raw EC-3 to EC-3 in MP4 (DONE)
+      AAC in MPEG-2 TS to AAC in MP4 (DONE)
+      AC-3 in MPEG-2 TS to AC-3 in MP4 (DONE)
+      EC-3 in MPEG-2 TS to EC-3 in MP4 (DONE)
+      MP3 in MPEG-2 TS to MP3 in MP4 (DONE)
+      MP3 in MPEG-2 TS to raw MP3 (???)
+      Opus in MPEG-2 TS to MP3 in MP4 (DONE)
+      H.264 in MPEG-2 TS to H.264 in MP4 (DONE)
+      H.265 in MPEG-2 TS to H.265 in MP4 (DONE)
+      Muxed content in MPEG-2 TS with the previous codecs
 
-ISO-BMFF / MP4 / CMAF support (DONE)
-MPEG-2 TS support (DONE)
-WebVTT and TTML (DONE)
-I-frame-only playlists with mjpg codec for thumbnails (DONE)
-#EXT-X-IMAGE-STREAM-INF for thumbnails (DONE)
-Interstitials (DONE)
-Timed Metadata for HTTP Live Streaming (ID3 format carried in MPEG-2 TS, Emsg in CMAF/Fragmented MP4, and DATERANGE playlist tags) (DONE)
-Low-latency streaming with partial segments, preload hints, delta updates and blocking playlist reload (DONE)
-Raw AAC, MP3, AC-3 and EC-3 (without an MP4 container) (DONE)
-AES-128, AES-256 and AES-256-CTR support on browsers with Web Crypto API support (DONE)
 
-SAMPLE-AES and SAMPLE-AES-CTR (identity) support on browsers with ClearKey support (DONE)
+Shaka Thumbnails support (DONE)
+      Shaka Player supports: (DONE)
+
+      Internal DASH thumbnails. Using DASH-IF IOP Image Adaptation Set (DONE)
+      Internal HLS thumbnails. Using HLS Image Media Playlist (DONE)
+      Internal HLS thumbnails. Using I-frame-only playlists with mjpg codec (DONE)
+      External WebVTT with images/sprites (only for VoD) (DONE)

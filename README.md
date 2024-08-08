@@ -33,10 +33,29 @@
     * [DASH In-manifest thumbnails](#dash-in-manifest-thumbnails)
   * [DRM](#drm)
     * [Widevine](#widevine)
-    * [Fairplay (Standard)](#fairplay-standard)
+    * [Fairplay](#fairplay)
     * [Fairplay (Legacy)](#fairplay-legacy)
     * [PlayReady](#playready)
     * [ClearKey](#clearkey)
+  * [Container Support](#container-support)
+    * [MPEG-2 TS AAC (Audio Codec)](#mpeg-2-ts-aac-audio-codec)
+    * [MPEG-2 TS AC3 (Audio Codec)](#mpeg-2-ts-ac3-audio-codec)
+    * [MPEG-2 TS EC3 (Audio Codec)](#mpeg-2-ts-ec3-audio-codec)
+    * [MPEG-2 TS MP3 (Audio Codec)](#mpeg-2-ts-mp3-audio-codec)
+    * [MPEG-2 TS Opus (Audio Codec)](#mpeg-2-ts-opus-audio-codec)
+    * [MPEG-2 TS H264 (Video Codec)](#mpeg-2-ts-h264-video-codec)
+    * [MPEG-2 TS H265 (Video Codec)](#mpeg-2-ts-h265-video-codec)
+    * [MPEG-2 TS ID3 (timed metadata)](#mpeg-2-ts-id3-timed-metadata)
+    * [MPEG-2 TS CEA-608/CEA-708 (text track)](#mpeg-2-ts-cea-608cea-708-text-track)
+    * [MP4 CEA-608/CEA-708 (text-track)](#mp4-cea-608cea-708-text-track)
+    * [MP4 IMSC (text-track)](#mp4-imsc-text-track)
+    * [MP4 VTT (text-track)](#mp4-vtt-text-track)
+    * [MP4 EMSG (timed-metadata)](#mp4-emsg-timed-metadata)
+  * [Offline Viewing](#offline-viewing)
+  * [Text (outside in-manifest and in-segment tracks)](#text-outside-in-manifest-and-in-segment-tracks)
+    * [External WebVTT (only for VoD)](#external-webvtt-only-for-vod)
+  * [Thumbnails (outside of HLS/DASH)](#thumbnails-outside-of-hlsdash)
+    * [External WebVTT with images/sprites (only for VoD)](#external-webvtt-with-imagessprites-only-for-vod)
   * [Server-Client Signaling](#server-client-signaling)
     * [Content Steering](#content-steering)
     * [Common-Media-Client-Data (CMCD)](#common-media-client-data-cmcd)
@@ -312,6 +331,8 @@ The following existing public packages should be deprecated and archived after `
 > ⚠️ **Note**
 >
 > HLS WeVTT is not encapsulated in fmp4 and timestamp sync is implemented via X-TIMESTAMP-MAP
+> 
+> > If content has in-manifest subtitles and in-segment subtitles (cea-608/708) - all will be emitted to the user.
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -327,6 +348,8 @@ The following existing public packages should be deprecated and archived after `
 >
 >
 > HLS IMSC is encapsulated in fmp4.
+> 
+> If content has in-manifest subtitles and in-segment subtitles (cea-608/708) - all will be emitted to the user.
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -413,13 +436,102 @@ The following existing public packages should be deprecated and archived after `
 
 ### Widevine
 
-### Fairplay (Standard)
+### Fairplay
 
 ### Fairplay (Legacy)
 
 ### PlayReady
 
 ### ClearKey
+
+## Container Support
+
+### MPEG-2 TS AAC (Audio Codec)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+> 
+> Transmux to MP4
+
+### MPEG-2 TS AC3 (Audio Codec)
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS EC3 (Audio Codec)
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS MP3 (Audio Codec)
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS Opus (Audio Codec)
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS H264 (Video Codec)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS H265 (Video Codec)
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+>
+> Transmux to MP4
+
+### MPEG-2 TS ID3 (timed metadata)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+>
+> Should be emitted alongside with in-manifest timed metadata (if any)
+
+### MPEG-2 TS CEA-608/CEA-708 (text track)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+> 
+> Should be emitted alongside with in-manifest text tracks (if any)
+
+### MP4 CEA-608/CEA-708 (text-track)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+>
+> Should be emitted alongside with in-manifest text tracks (if any)
+
+### MP4 IMSC (text-track)
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+>
+> Should be emitted alongside with in-manifest text tracks (if any)
+
+### MP4 VTT (text-track)
+> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+>
+> Should be emitted alongside with in-manifest text tracks (if any)
+
+### MP4 EMSG (timed-metadata)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+>
+> Should be emitted alongside with in-manifest timed-metadata (if any)
+
+## Offline Viewing
+
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+> 
+> Including DRM support, see: https://www.w3.org/TR/encrypted-media/#dom-mediakeysession-load
+
+|         | URLS                                                                        |
+|---------|-----------------------------------------------------------------------------|
+| Shaka   | https://github.com/shaka-project/shaka-player/tree/main/lib/offline         |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/tree/development/src/offline |
+| hls.js  | Not Implemented                                                             |
+
+## Text (outside in-manifest and in-segment tracks)
+
+### External WebVTT (only for VoD)
+> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS directly*)
+
+## Thumbnails (outside of HLS/DASH)
+
+### External WebVTT with images/sprites (only for VoD)
+> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS directly*)
 
 ## Server-Client Signaling
 
