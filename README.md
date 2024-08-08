@@ -9,11 +9,19 @@
     * [HLS Live](#hls-live)
     * [HLS Live DVR window](#hls-live-dvr-window)
     * [HLS Alternative Audio support (when main is muxed)](#hls-alternative-audio-support-when-main-is-muxed)
+    * [HLS Single Media Playlist Load (without multivariant playlist)](#hls-single-media-playlist-load-without-multivariant-playlist)
+    * [HLS Key Rotation](#hls-key-rotation)
+    * [HLS Server Control](#hls-server-control)
     * [HLS Live Low Latency](#hls-live-low-latency)
     * [HLS Byte Range](#hls-byte-range)
     * [HLS In-Manifest Timed Metadata (via ext-x-dateRange)](#hls-in-manifest-timed-metadata-via-ext-x-daterange)
     * [HLS MPEG-2 Transport Stream](#hls-mpeg-2-transport-stream)
     * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
+    * [HLS Raw AAC](#hls-raw-aac)
+    * [HLS Raw MP3](#hls-raw-mp3)
+    * [HLS Raw AC3/EC3](#hls-raw-ac3ec3)
+    * [HLS AES-128](#hls-aes-128)
+    * [HLS SAMPLE-AES and SAMPLE-AES-CTR with KEYFORMAT="identity" (ClearKey)](#hls-sample-aes-and-sample-aes-ctr-with-keyformatidentity-clearkey)
     * [HLS WebVTT](#hls-webvtt)
     * [HLS IMSC Subtitles](#hls-imsc-subtitles)
     * [HLS Variable Substitution](#hls-variable-substitution)
@@ -23,6 +31,12 @@
     * [HLS In-manifest thumbnails (Roku spec)](#hls-in-manifest-thumbnails-roku-spec)
   * [Dash Features](#dash-features)
     * [DASH In-manifest thumbnails](#dash-in-manifest-thumbnails)
+  * [DRM](#drm)
+    * [Widevine](#widevine)
+    * [Fairplay (Standard)](#fairplay-standard)
+    * [Fairplay (Legacy)](#fairplay-legacy)
+    * [PlayReady](#playready)
+    * [ClearKey](#clearkey)
   * [Server-Client Signaling](#server-client-signaling)
     * [Content Steering](#content-steering)
     * [Common-Media-Client-Data (CMCD)](#common-media-client-data-cmcd)
@@ -134,7 +148,6 @@ The following existing public packages should be deprecated and archived after `
 
 ## HLS Features
 
-
 ### HLS VOD
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
@@ -150,6 +163,26 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS Alternative Audio support (when main is muxed)
 > ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
+> 
+> If alternative audio is enabled, in-segment audio should be ignored
+
+### HLS Single Media Playlist Load (without multivariant playlist)
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+### HLS Key Rotation
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+|      | URLS                                                                              |
+|------|-----------------------------------------------------------------------------------|
+| Spec | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.4.4 |
+
+### HLS Server Control
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+|      | URLS                                                                              |
+|------|-----------------------------------------------------------------------------------|
+| Spec | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.3.8 |
+
 
 ### HLS Live Low Latency
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
@@ -160,7 +193,6 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3592 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L595      |
 
-
 ### HLS Byte Range
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
@@ -170,9 +202,14 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3647 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L388      |
 
-
 ### HLS In-Manifest Timed Metadata (via ext-x-dateRange)
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+> ⚠️ **Note**
+>
+> Both ID3 format carried in MPEG-2 TS or Emsg in CMAF/Fragmented MP4 and In-Manifest Timed Metadata will be processed.
+> 
+> But we should report warning and point that this might be content provider miss-configuration.
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -180,12 +217,16 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3874 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/date-range.ts            |
 
-
 ### HLS MPEG-2 Transport Stream
 
 > ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 > 
 > While the community is moving toward HLS CMAF, mpeg2-ts is still massively presented, so we have to support it.
+
+> ⚠️ **Note**
+>
+> Widevine/Playready are not supported for mpeg-2 TS
+> Fairplay should be supported only natively for mpeg-2 ts
 
 |        | URLS                                                                                    |
 |--------|-----------------------------------------------------------------------------------------|
@@ -202,6 +243,67 @@ The following existing public packages should be deprecated and archived after `
 | Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.2     |
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3431 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L540      |
+
+### HLS Raw AAC
+
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+> 
+> Shaka and hls.js transmux to AAC in MP4 container
+
+|        | URLS                                                                                     |
+|--------|------------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.3          |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/transmuxer/aac_transmuxer.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/audio/aacdemuxer.ts            |
+
+### HLS Raw MP3
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Shaka and hls.js transmux to MP3 in MP4 container
+
+|        | URLS                                                                                     |
+|--------|------------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.3          |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/transmuxer/mp3_transmuxer.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/audio/mp3demuxer.ts            |
+
+### HLS Raw AC3/EC3
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+>
+> Shaka and hls.js transmux to AC3/EC3 in MP4 container
+
+|        | URLS                                                                                     |
+|--------|------------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.3          |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/transmuxer/ec3_transmuxer.js |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/audio/ac3-demuxer.ts           |
+
+### HLS AES-128
+> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+
+> ⚠️ **Note**
+> 
+> Current VHS implementation covers only AES-128 and creates additional WebWorker per each player instance.
+> 
+> Shaka uses native Web Crypto subtle API
+> 
+> hls.js uses combination of native web crypto and fallbacks to the software aes decrypt impl.
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.4.4   |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3154 |
+| hls.js | https://github.com/video-dev/hls.js/blob/master/src/crypt/decrypter.ts              |
+
+### HLS SAMPLE-AES and SAMPLE-AES-CTR with KEYFORMAT="identity" (ClearKey)
+> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
+
+|        | URLS                                                                                |
+|--------|-------------------------------------------------------------------------------------|
+| Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.4.4   |
+| Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L4773 |
+| hls.js | identity" format SAMPLE-AES decryption of MPEG-2 TS segments only                   |
+
 
 ### HLS WebVTT
 
@@ -270,7 +372,6 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | Not Implemented                                                                   |
 | hls.js | Not Implemented                                                                   |
 
-
 ### HLS In-manifest thumbnails (ext-x-iframes-only)
 
 > ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
@@ -307,6 +408,19 @@ The following existing public packages should be deprecated and archived after `
 | Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L2224-L2239                |
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/thumbnail/ThumbnailTracks.js |
 
+
+## DRM
+
+### Widevine
+
+### Fairplay (Standard)
+
+### Fairplay (Legacy)
+
+### PlayReady
+
+### ClearKey
+
 ## Server-Client Signaling
 
 ### Content Steering
@@ -322,7 +436,6 @@ The following existing public packages should be deprecated and archived after `
 | Shaka     | https://github.com/shaka-project/shaka-player/blob/main/lib/util/content_steering_manager.js                      |
 | dash.js   | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/dash/controllers/ContentSteeringController.js |
 | hls.js    | https://github.com/video-dev/hls.js/blob/master/src/controller/content-steering-controller.ts                     |
-
 
 ### Common-Media-Client-Data (CMCD)
 
