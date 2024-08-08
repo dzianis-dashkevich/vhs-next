@@ -165,55 +165,40 @@ The following existing public packages should be deprecated and archived after `
 
 # Functional Requirements
 
-| Name                                       | VHS (current) | Priority | Notes                                                               | References |
-|--------------------------------------------|---------------|----------|---------------------------------------------------------------------|------------|
-| HLS                                        |               |          |                                                                     |            |
-| HLS VOD                                    | YES           | MUST     | N/A                                                                 | N/A        |
-| HLS Live                                   | YES           | MUST     | N/A                                                                 | N/A        |
-| HLS Live DVR                               | YES           | MUST     | Must support proper `seekable` API                                  | N/A        |
-| HLS Alternative Audio (when main is muxed) | NO            | MUST     | If alternative audio is enabled, in-segment audio should be ignored | N/A        |
+| Name                                       | VHS (current) | Priority | Notes                                                                                                              | References                                  |
+|--------------------------------------------|---------------|----------|--------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| HLS                                        |               |          |                                                                                                                    |                                             |
+| HLS VOD                                    | YES           | MUST     | N/A                                                                                                                | N/A                                         |
+| HLS Live                                   | YES           | MUST     | N/A                                                                                                                | N/A                                         |
+| HLS Live DVR                               | YES           | MUST     | Must support proper `seekable` API                                                                                 | N/A                                         |
+| HLS Alternative Audio (when main is muxed) | NO            | MUST     | If alternative audio is enabled, in-segment audio should be ignored                                                | N/A                                         |
+| HLS Standalone Media Playlist Loading      | YES           | MUST     | Player should support standalone media playlist load (outside of the multivariant playlist)                        | N/A                                         |
+| HLS Key Rotation                           | YES           | MUST     | Player should be able to rotate ext-x-keys if multiple keys are presented in the playlist                          | (ref)[#hls-key-rotation]                    |
+| HLS Server Control                         | YES           | MUST     | N/A                                                                                                                | (ref)[#hls-server-control]                  |
+| HLS Live Low Latency                       | YES           | MUST     | N/A                                                                                                                | (ref)[#hls-live-low-latency]                |
+| HLS Byte Range                             | YES           | MUST     | N/A                                                                                                                | (ref)[#hls-byte-range]                      |
+| HLS In-Manifest Timed Metadata             | YES           | MUST     | Both in-segment (id3 or emsg) and in-manifest (ext-x-DateRange) metadata will be processed. We should log warning. | (ref)[#hls-in-manifest-timed-metadata]      |
+| HLS MPEG-2 Transport Stream                | YES           | MUST     | Widevine/Playready are not supported for mpeg-2 ts. Fairplay should supported only by native apple's player.       | (ref)[#hls-mpeg-2-transport-stream]         |
+| HLS Common Media Application Format (CMAF) | YES           | MUST     | N/A                                                                                                                | (ref)[#hls-common-media-application-format] |
+| HLS Raw AAC                                | NO            | COULD    | Shaka and hls.js transmux to AAC in MP4                                                                            | (ref)[#hls-raw-aac]                         |
+| HLS Raw MP3                                | NO            | COULD    | Shaka and hls.js transmux to MP3 in MP4 container                                                                  | (ref)[#hls-raw-mp3]                         |
 
 
-## HLS Features
-
-### HLS VOD
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
-
-### HLS Live
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
-
-### HLS Live DVR window
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
-
-> ⚠️ **Note**
->
-> Must support proper seekable API
-
-### HLS Alternative Audio support (when main is muxed)
-> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
-> 
-> If alternative audio is enabled, in-segment audio should be ignored
-
-### HLS Single Media Playlist Load (without multivariant playlist)
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
+## References
 
 ### HLS Key Rotation
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |      | URLS                                                                              |
 |------|-----------------------------------------------------------------------------------|
 | Spec | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.4.4 |
 
 ### HLS Server Control
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |      | URLS                                                                              |
 |------|-----------------------------------------------------------------------------------|
 | Spec | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-4.4.3.8 |
 
-
 ### HLS Live Low Latency
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -222,7 +207,6 @@ The following existing public packages should be deprecated and archived after `
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L595      |
 
 ### HLS Byte Range
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -230,14 +214,7 @@ The following existing public packages should be deprecated and archived after `
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L3647 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L388      |
 
-### HLS In-Manifest Timed Metadata (via ext-x-dateRange)
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
-
-> ⚠️ **Note**
->
-> Both ID3 format carried in MPEG-2 TS or Emsg in CMAF/Fragmented MP4 and In-Manifest Timed Metadata will be processed.
-> 
-> But we should report warning and point that this might be content provider miss-configuration.
+### HLS In-Manifest Timed Metadata
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -247,15 +224,6 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS MPEG-2 Transport Stream
 
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
-> 
-> While the community is moving toward HLS CMAF, mpeg2-ts is still massively presented, so we have to support it.
-
-> ⚠️ **Note**
->
-> Widevine/Playready are not supported for mpeg-2 TS
-> Fairplay should be supported only natively for mpeg-2 ts
-
 |        | URLS                                                                                    |
 |--------|-----------------------------------------------------------------------------------------|
 | Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.1         |
@@ -263,8 +231,6 @@ The following existing public packages should be deprecated and archived after `
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/tsdemuxer.ts                  |
 
 ### HLS Common Media Application Format (CMAF)
-
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
 
 |        | URLS                                                                                |
 |--------|-------------------------------------------------------------------------------------|
@@ -274,10 +240,6 @@ The following existing public packages should be deprecated and archived after `
 
 ### HLS Raw AAC
 
-> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
-> 
-> Shaka and hls.js transmux to AAC in MP4 container
-
 |        | URLS                                                                                     |
 |--------|------------------------------------------------------------------------------------------|
 | Spec   | https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis#section-3.1.3          |
@@ -285,9 +247,6 @@ The following existing public packages should be deprecated and archived after `
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/demux/audio/aacdemuxer.ts            |
 
 ### HLS Raw MP3
-> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
->
-> Shaka and hls.js transmux to MP3 in MP4 container
 
 |        | URLS                                                                                     |
 |--------|------------------------------------------------------------------------------------------|
