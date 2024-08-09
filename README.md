@@ -211,6 +211,9 @@ The following existing public packages should be deprecated and archived after `
 | MPEG-2 TS ID3 (timed metadata)                              | ✅             | MUST     | Should be emitted alongside with in-manifest timed metadata (if any)                                                                                                                                                                    | [mpeg-2-ts-id3](#mpeg-2-ts-id3)                                             |
 | MPEG-2 TS CEA-608/CEA-708 (text tracks)                     | ✅             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mpeg-2-ts-cea-608/cea-708](#mpeg-2-ts-cea-608cea-708)                      |
 | MP4 CEA-608/CEA-708 (text tracks)                           | ✅             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mp4-cea-608/cea-708](#mp4-cea-608cea-708)                                  |
+| MP4 IMSC (text-tracks)                                      | ❌             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mp4-imsc](#mp4-imsc)                                                       |
+| MP4 VTT (text-tracks)                                       | ❌             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mp4-vtt](#mp4-vtt)                                                         |
+| MP4 EMSG (timed-metadata)                                   | ✅             | MUST     | Should be emitted alongside with in-manifest timed-metadata (if any)                                                                                                                                                                    | [mp4-emsg](#mp4-emsg)                                                       |
 
 
 ## References
@@ -453,21 +456,29 @@ The following existing public packages should be deprecated and archived after `
 |-------|-----------------------------------------------------------------------------------|
 | Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/cea/mp4_cea_parser.js |
 
+### MP4 IMSC
 
-### MP4 IMSC (text-track)
-> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
->
-> Should be emitted alongside with in-manifest text tracks (if any)
+|         | URLS                                                                                              |
+|---------|---------------------------------------------------------------------------------------------------|
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/text/mp4_ttml_parser.js               |
+| hls.js  | https://github.com/video-dev/hls.js/blob/master/src/utils/imsc1-ttml-parser.ts                    |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/utils/TTMLParser.js |
 
-### MP4 VTT (text-track)
-> ℹ️ **Priority: MUST** (*Currently NOT supported by VHS*)
->
-> Should be emitted alongside with in-manifest text tracks (if any)
+### MP4 VTT
 
-### MP4 EMSG (timed-metadata)
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
->
-> Should be emitted alongside with in-manifest timed-metadata (if any)
+|         | URLS                                                                                             |
+|---------|--------------------------------------------------------------------------------------------------|
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/text/mp4_vtt_parser.js               |
+| hls.js  | https://github.com/video-dev/hls.js/blob/master/src/utils/vttparser.ts                           |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/utils/VTTParser.js |
+
+### MP4 EMSG
+
+|         | URLS                                                                                           |
+|---------|------------------------------------------------------------------------------------------------|
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/media/streaming_engine.js#L2292    |
+| hls.js  | https://github.com/video-dev/hls.js/blob/master/src/utils/mp4-tools.ts#L1197                   |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/vo/IsoBox.js#L66 |
 
 ## Offline Viewing
 
