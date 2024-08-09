@@ -4,66 +4,49 @@
 * [Motivation](#motivation)
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
-  * [HLS Features](#hls-features)
-    * [HLS VOD](#hls-vod)
-    * [HLS Live](#hls-live)
-    * [HLS Live DVR window](#hls-live-dvr-window)
-    * [HLS Alternative Audio support (when main is muxed)](#hls-alternative-audio-support-when-main-is-muxed)
-    * [HLS Single Media Playlist Load (without multivariant playlist)](#hls-single-media-playlist-load-without-multivariant-playlist)
+* [Non-Functional Requirements](#non-functional-requirements)
+* [Entities](#entities)
+* [Scenarios](#scenarios)
+* [References](#references)
     * [HLS Key Rotation](#hls-key-rotation)
     * [HLS Server Control](#hls-server-control)
     * [HLS Live Low Latency](#hls-live-low-latency)
     * [HLS Byte Range](#hls-byte-range)
-    * [HLS In-Manifest Timed Metadata (via ext-x-dateRange)](#hls-in-manifest-timed-metadata-via-ext-x-daterange)
+    * [HLS In-Manifest Timed Metadata](#hls-in-manifest-timed-metadata)
     * [HLS MPEG-2 Transport Stream](#hls-mpeg-2-transport-stream)
-    * [HLS Common Media Application Format (CMAF)](#hls-common-media-application-format-cmaf)
+    * [HLS Common Media Application Format](#hls-common-media-application-format)
     * [HLS Raw AAC](#hls-raw-aac)
     * [HLS Raw MP3](#hls-raw-mp3)
     * [HLS Raw AC3/EC3](#hls-raw-ac3ec3)
     * [HLS AES-128](#hls-aes-128)
-    * [HLS SAMPLE-AES and SAMPLE-AES-CTR with KEYFORMAT="identity" (ClearKey)](#hls-sample-aes-and-sample-aes-ctr-with-keyformatidentity-clearkey)
+    * [HLS ClearKey](#hls-clearkey)
     * [HLS WebVTT](#hls-webvtt)
-    * [HLS IMSC Subtitles](#hls-imsc-subtitles)
+    * [HLS IMSC](#hls-imsc)
     * [HLS Variable Substitution](#hls-variable-substitution)
     * [HLS Interstitial](#hls-interstitial)
     * [HLS Trick Play](#hls-trick-play)
-    * [HLS In-manifest thumbnails (ext-x-iframes-only)](#hls-in-manifest-thumbnails-ext-x-iframes-only)
-    * [HLS In-manifest thumbnails (Roku spec)](#hls-in-manifest-thumbnails-roku-spec)
-  * [Dash Features](#dash-features)
+    * [HLS In-manifest thumbnails i-frames](#hls-in-manifest-thumbnails-i-frames)
+    * [HLS In-manifest thumbnails Roku](#hls-in-manifest-thumbnails-roku)
+    * [HLS Session Data](#hls-session-data)
     * [DASH In-manifest thumbnails](#dash-in-manifest-thumbnails)
-  * [DRM](#drm)
-    * [Widevine](#widevine)
-    * [Fairplay](#fairplay)
-    * [Fairplay (Legacy)](#fairplay-legacy)
-    * [PlayReady](#playready)
-    * [ClearKey](#clearkey)
-  * [Container Support](#container-support)
-    * [MPEG-2 TS AAC (Audio Codec)](#mpeg-2-ts-aac-audio-codec)
-    * [MPEG-2 TS AC3 (Audio Codec)](#mpeg-2-ts-ac3-audio-codec)
-    * [MPEG-2 TS EC3 (Audio Codec)](#mpeg-2-ts-ec3-audio-codec)
-    * [MPEG-2 TS MP3 (Audio Codec)](#mpeg-2-ts-mp3-audio-codec)
-    * [MPEG-2 TS Opus (Audio Codec)](#mpeg-2-ts-opus-audio-codec)
-    * [MPEG-2 TS H264 (Video Codec)](#mpeg-2-ts-h264-video-codec)
-    * [MPEG-2 TS H265 (Video Codec)](#mpeg-2-ts-h265-video-codec)
-    * [MPEG-2 TS ID3 (timed metadata)](#mpeg-2-ts-id3-timed-metadata)
-    * [MPEG-2 TS CEA-608/CEA-708 (text track)](#mpeg-2-ts-cea-608cea-708-text-track)
-    * [MP4 CEA-608/CEA-708 (text-track)](#mp4-cea-608cea-708-text-track)
-    * [MP4 IMSC (text-track)](#mp4-imsc-text-track)
-    * [MP4 VTT (text-track)](#mp4-vtt-text-track)
-    * [MP4 EMSG (timed-metadata)](#mp4-emsg-timed-metadata)
-  * [Offline Viewing](#offline-viewing)
-  * [Text (outside in-manifest and in-segment tracks)](#text-outside-in-manifest-and-in-segment-tracks)
-    * [External WebVTT (only for VoD)](#external-webvtt-only-for-vod)
-  * [Thumbnails (outside of HLS/DASH)](#thumbnails-outside-of-hlsdash)
-    * [External WebVTT with images/sprites (only for VoD)](#external-webvtt-with-imagessprites-only-for-vod)
-  * [Server-Client Signaling](#server-client-signaling)
+    * [DRM](#drm)
+    * [DRM Fairplay Legacy](#drm-fairplay-legacy)
+    * [MPEG-2 TS AAC](#mpeg-2-ts-aac)
+    * [MPEG-2 TS AC3/EC3](#mpeg-2-ts-ac3ec3)
+    * [MPEG-2 TS MP3](#mpeg-2-ts-mp3)
+    * [MPEG-2 TS Opus](#mpeg-2-ts-opus)
+    * [MPEG-2 TS H264](#mpeg-2-ts-h264)
+    * [MPEG-2 TS H265](#mpeg-2-ts-h265)
+    * [MPEG-2 TS ID3](#mpeg-2-ts-id3)
+    * [MPEG-2 TS CEA-608/CEA-708](#mpeg-2-ts-cea-608cea-708)
+    * [MP4 CEA-608/CEA-708](#mp4-cea-608cea-708)
+    * [MP4 IMSC](#mp4-imsc)
+    * [MP4 VTT](#mp4-vtt)
+    * [MP4 EMSG](#mp4-emsg)
+    * [Offline](#offline)
     * [Content Steering](#content-steering)
-    * [Common-Media-Client-Data (CMCD)](#common-media-client-data-cmcd)
-    * [Common-Media-Server-Data (CMSD)](#common-media-server-data-cmsd)
-* [Non-Functional Requirements](#non-functional-requirements)
-* [Entities](#entities)
-* [Scenarios](#scenarios)
-
+    * [Common-Media-Client-Data](#common-media-client-data)
+    * [Common-Media-Server-Data](#common-media-server-data)
 
 # Summary
 
@@ -222,8 +205,21 @@ The following existing public packages should be deprecated and archived after `
 | IndexDB VOD persistence                                     | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [offline](#offline)                                                         |
 | Offline DRM                                                 | ❌             | SHOULD   | support persisentState="required", sessionType="persistent-license" and mediaKeySession.load(sessionId)                                                                                                                                 | [offline](#offline)                                                         |
 
+# Non-Functional Requirements
 
-## References
+TBD: Describe non-functional Requirements, eg: build your own player, pipeline, size, etc...
+
+# Entities
+
+TBD: Describe entities and their relations
+TBD: support loading external WebVTT with subtitles for VOD
+TBD: support loading external WebVTT with image/sprites for VOD
+
+# Scenarios
+
+TBD: Describe Scenarios with flow charts and comments (where possible use connections to FRs and NFRs)
+
+# References
 
 ### HLS Key Rotation
 
@@ -522,17 +518,3 @@ The following existing public packages should be deprecated and archived after `
 | Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/util/cmsd_manager.js                  |
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmsdModel.js |
 | hls.js  | Not Implemented                                                                                   |
-
-# Non-Functional Requirements
-
-TBD: Describe non-functional Requirements, eg: build your own player, pipeline, size, etc...
-
-# Entities
-
-TBD: Describe entities and their relations
-TBD: support loading external WebVTT with subtitles for VOD
-TBD: support loading external WebVTT with image/sprites for VOD
-
-# Scenarios
-
-TBD: Describe Scenarios with flow charts and comments (where possible use connections to FRs and NFRs)
