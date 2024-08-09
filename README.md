@@ -214,6 +214,13 @@ The following existing public packages should be deprecated and archived after `
 | MP4 IMSC (text-tracks)                                      | ❌             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mp4-imsc](#mp4-imsc)                                                       |
 | MP4 VTT (text-tracks)                                       | ❌             | MUST     | Should be emitted alongside with in-manifest text tracks (if any)                                                                                                                                                                       | [mp4-vtt](#mp4-vtt)                                                         |
 | MP4 EMSG (timed-metadata)                                   | ✅             | MUST     | Should be emitted alongside with in-manifest timed-metadata (if any)                                                                                                                                                                    | [mp4-emsg](#mp4-emsg)                                                       |
+| **Server-Client Signaling**                                 |               |          |                                                                                                                                                                                                                                         |                                                                             |
+| Content Steering                                            | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [content-steering](#content-steering)                                       |
+| Common-Media-Client-Data (CMCD)                             | ❌             | SHOULD   | We may consider re-using `@svta/common-media-library/cmcd/*` utils                                                                                                                                                                      | [common-media-client-data](#common-media-client-data)                       |
+| Common-Media-Server-Data (CMSD)                             | ❌             | SHOULD   | Limited support in shaka and dash.js. Mainly for abr. We may consider re-using `@svta/common-media-library/cmsd/*` utils                                                                                                                | [common-media-server-data](#common-media-server-data)                       |
+| **Offline**                                                 |               |          |                                                                                                                                                                                                                                         |                                                                             |
+| IndexDB VOD persistence                                     | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [offline](#offline)                                                         |
+| Offline DRM                                                 | ❌             | SHOULD   | support persisentState="required", sessionType="persistent-license" and mediaKeySession.load(sessionId)                                                                                                                                 | [offline](#offline)                                                         |
 
 
 ## References
@@ -480,11 +487,7 @@ The following existing public packages should be deprecated and archived after `
 | hls.js  | https://github.com/video-dev/hls.js/blob/master/src/utils/mp4-tools.ts#L1197                   |
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/vo/IsoBox.js#L66 |
 
-## Offline Viewing
-
-> ℹ️ **Priority: COULD** (*Currently NOT supported by VHS*)
-> 
-> Including DRM support, see: https://www.w3.org/TR/encrypted-media/#dom-mediakeysession-load
+### Offline
 
 |         | URLS                                                                        |
 |---------|-----------------------------------------------------------------------------|
@@ -492,23 +495,7 @@ The following existing public packages should be deprecated and archived after `
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/tree/development/src/offline |
 | hls.js  | Not Implemented                                                             |
 
-## Text (outside in-manifest and in-segment tracks)
-
-### External WebVTT (only for VoD)
-> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS directly*)
-
-## Thumbnails (outside of HLS/DASH)
-
-### External WebVTT with images/sprites (only for VoD)
-> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS directly*)
-
-## Server-Client Signaling
-
 ### Content Steering
-
-> ℹ️ **Priority: MUST** (*Currently supported by VHS*)
->
-> All major open source players support this feature.
 
 |           | URLS                                                                                                              |
 |-----------|-------------------------------------------------------------------------------------------------------------------|
@@ -518,11 +505,7 @@ The following existing public packages should be deprecated and archived after `
 | dash.js   | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/dash/controllers/ContentSteeringController.js |
 | hls.js    | https://github.com/video-dev/hls.js/blob/master/src/controller/content-steering-controller.ts                     |
 
-### Common-Media-Client-Data (CMCD)
-
-> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS*)
-> 
-> All major open source players support this feature. We may consider re-using `@svta/common-media-library/cmcd/*` utils.
+### Common-Media-Client-Data
 
 |         | URLS                                                                                              |
 |---------|---------------------------------------------------------------------------------------------------|
@@ -531,11 +514,7 @@ The following existing public packages should be deprecated and archived after `
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/models/CmcdModel.js |
 | hls.js  | https://github.com/video-dev/hls.js/blob/master/src/controller/cmcd-controller.ts                 |
 
-### Common-Media-Server-Data (CMSD)
-
-> ℹ️ **Priority: SHOULD** (*Currently NOT supported by VHS*)
->
-> Limited support in shaka and dash.js. Mainly for abr. We may consider re-using `@svta/common-media-library/cmsd/*` utils.
+### Common-Media-Server-Data
 
 |         | URLS                                                                                              |
 |---------|---------------------------------------------------------------------------------------------------|
@@ -551,6 +530,8 @@ TBD: Describe non-functional Requirements, eg: build your own player, pipeline, 
 # Entities
 
 TBD: Describe entities and their relations
+TBD: support loading external WebVTT with subtitles for VOD
+TBD: support loading external WebVTT with image/sprites for VOD
 
 # Scenarios
 
