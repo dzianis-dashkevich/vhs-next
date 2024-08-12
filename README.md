@@ -192,6 +192,7 @@ The following existing public packages should be deprecated and archived after `
 | DASH Segment SegmentList Addressing                         | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [dash-segmentList](#dash-segmentlist)                                       |
 | DASH In-manifest timed Metadata                             | ✅             | MUST     | via EventStream                                                                                                                                                                                                                         | [dash-in-manifest-timed-metadata](#dash-in-manifest-timed-metadata)         |
 | DASH MPD-Chaining                                           | ❌             | COULD    | MPD chaining provides a mechanism to indicate that, at the end of one Media Presentation, a new Media Presentation starts.                                                                                                              | [dash-mpd-chaining](#dash-mpd-chaining)                                     |
+| DASH Low Latency                                            | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [dash-low-latency](#dash-low-latency)                                       |
 | DASH Trick Play                                             | ❌             | COULD    | N/A                                                                                                                                                                                                                                     | [dash-trick-play](#dash-trick-play)                                         |
 | DASH In-manifest thumbnails                                 | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [dash-in-manifest-thumbnails](#dash-in-manifest-thumbnails)                 |
 | **DRM**                                                     |               |          |                                                                                                                                                                                                                                         |                                                                             |
@@ -460,6 +461,13 @@ TBD: Describe Scenarios with flow charts and comments (where possible use connec
 |-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Spec  | Section 5.11 in the iso ISO/IEC 23009-1.                                                                                                                                     |
 | Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L805 <br/> https://github.com/shaka-project/shaka-player/blob/main/lib/player.js#L2657-L2677 |
+
+### DASH Low Latency
+
+|         | URLS                                                                                              |
+|---------|---------------------------------------------------------------------------------------------------|
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/media/streaming_engine.js#L1573-L1630 |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/wiki/Low-Latency-streaming                         |
 
 ### DASH In-manifest thumbnails
 
