@@ -184,6 +184,8 @@ The following existing public packages should be deprecated and archived after `
 | DASH In-Progress Recording                                  | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | N/A                                                                         |
 | DASH Live DVR (timeShiftBufferDepth)                        | ❌             | MUST     | Must support proper `seekable` API                                                                                                                                                                                                      | N/A                                                                         |
 | DASH Multi-Period                                           | ✅             | MUST     | To reset transmuxers and other in-memory pipelines (eg: cea-608/cea-708)                                                                                                                                                                | N/A                                                                         |
+| DASH Xlink (onLoad)                                         | ❌             | SHOULD   | onLoad: an application should dereference the remote element entity immediately on loading the MPD.                                                                                                                                     | [dash-xlink](#dash-xlink)                                                   |
+| DASH Xlink (onRequest)                                      | ❌             | COULD    | onRequest (default): according to W3C Xlink, an application should dereference the remote element entity only on a post-loading event triggered for the purpose of dereferencing.                                                       | [dash-xlink](#dash-xlink)                                                   |
 | DASH In-manifest thumbnails                                 | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [dash-in-manifest-thumbnails](#dash-in-manifest-thumbnails)                 |
 | **DRM**                                                     |               |          |                                                                                                                                                                                                                                         |                                                                             |
 | Widevine                                                    | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [drm](#drm)                                                                 |
@@ -227,6 +229,19 @@ TBD: support loading external WebVTT with image/sprites for VOD
 TBD: Describe Scenarios with flow charts and comments (where possible use connections to FRs and NFRs)
 
 # References
+
+
+> ⚠️ **Note**
+>
+> DASH references may contain both spec and dash-if IP links.
+> 
+> DASH spec is ISO/IEC 23009-1 and can be downloaded here:
+> 
+> https://standards.iso.org/ittf/PubliclyAvailableStandards/ --> ISO/IEC 23009-1 (current is 5th 2022 edition)
+> 
+> DASH-IF (Industry Forum) Guidelines for Implementation: DASH-IF Interoperability Points (Deployed living document) is here:
+> 
+> https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html
 
 ### HLS Key Rotation
 
@@ -384,11 +399,19 @@ TBD: Describe Scenarios with flow charts and comments (where possible use connec
 | Shaka  | https://github.com/shaka-project/shaka-player/blob/main/lib/hls/hls_parser.js#L1295 |
 | hls.js | https://github.com/video-dev/hls.js/blob/master/src/loader/m3u8-parser.ts#L152      |
 
+### DASH Xlink
+
+|         | URLS                                                                                                         |
+|---------|--------------------------------------------------------------------------------------------------------------|
+| Spec    | https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html#xlink-feature                 |
+| Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/mpd_utils.js#L513                           |
+| dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/controllers/XlinkController.js |
+
 ### DASH In-manifest thumbnails
 
 |         | URLS                                                                                                       |
 |---------|------------------------------------------------------------------------------------------------------------|
-| Spec    | https://dashif.org/docs/DASH-IF-IOP-v4.3.pdf section 6.2.6                                                 |
+| Spec    | https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html#thumbnails                  |
 | Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L2224-L2239                |
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/thumbnail/ThumbnailTracks.js |
 
