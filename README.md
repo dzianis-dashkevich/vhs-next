@@ -190,6 +190,7 @@ The following existing public packages should be deprecated and archived after `
 | DASH Segment Explicit Addressing                            | ✅             | MUST     | SegmentTemplate with SegmentTimeline                                                                                                                                                                                                    | [dash-explicit-addressing](#dash-explicit-addressing)                       |
 | DASH Segment Simple Addressing                              | ✅             | MUST     | SegmentTemplate without SegmentTimeline                                                                                                                                                                                                 | [dash-simple-addressing](#dash-simple-addressing)                           |
 | DASH Segment SegmentList Addressing                         | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [dash-segmentList](#dash-segmentlist)                                       |
+| DASH Trick Play                                             | ❌             | COULD    | N/A                                                                                                                                                                                                                                     | [dash-trick-play](#dash-trick-play)                                         |
 | DASH In-manifest thumbnails                                 | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [dash-in-manifest-thumbnails](#dash-in-manifest-thumbnails)                 |
 | **DRM**                                                     |               |          |                                                                                                                                                                                                                                         |                                                                             |
 | Widevine                                                    | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [drm](#drm)                                                                 |
@@ -437,6 +438,14 @@ TBD: Describe Scenarios with flow charts and comments (where possible use connec
 | Spec    | https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html#xlink-feature                 |
 | Shaka   | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/mpd_utils.js#L513                           |
 | dash.js | https://github.com/Dash-Industry-Forum/dash.js/blob/development/src/streaming/controllers/XlinkController.js |
+
+### DASH Trick Play
+
+|       | URLS                                                                                     |
+|-------|------------------------------------------------------------------------------------------|
+| Spec  | https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html#trickmode |
+| Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L1522    |
+
 
 ### DASH In-manifest thumbnails
 
