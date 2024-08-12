@@ -190,6 +190,8 @@ The following existing public packages should be deprecated and archived after `
 | DASH Segment Explicit Addressing                            | ✅             | MUST     | SegmentTemplate with SegmentTimeline                                                                                                                                                                                                    | [dash-explicit-addressing](#dash-explicit-addressing)                       |
 | DASH Segment Simple Addressing                              | ✅             | MUST     | SegmentTemplate without SegmentTimeline                                                                                                                                                                                                 | [dash-simple-addressing](#dash-simple-addressing)                           |
 | DASH Segment SegmentList Addressing                         | ✅             | MUST     | N/A                                                                                                                                                                                                                                     | [dash-segmentList](#dash-segmentlist)                                       |
+| DASH In-manifest timed Metadata                             | ✅             | MUST     | via EventStream                                                                                                                                                                                                                         | [dash-in-manifest-timed-metadata](#dash-in-manifest-timed-metadata)         |
+| DASH MPD-Chaining                                           | ❌             | COULD    | MPD chaining provides a mechanism to indicate that, at the end of one Media Presentation, a new Media Presentation starts.                                                                                                              | [dash-mpd-chaining](#dash-mpd-chaining)                                     |
 | DASH Trick Play                                             | ❌             | COULD    | N/A                                                                                                                                                                                                                                     | [dash-trick-play](#dash-trick-play)                                         |
 | DASH In-manifest thumbnails                                 | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [dash-in-manifest-thumbnails](#dash-in-manifest-thumbnails)                 |
 | **DRM**                                                     |               |          |                                                                                                                                                                                                                                         |                                                                             |
@@ -446,6 +448,18 @@ TBD: Describe Scenarios with flow charts and comments (where possible use connec
 | Spec  | https://dashif-documents.azurewebsites.net/DASH-IF-IOP/master/DASH-IF-IOP.html#trickmode |
 | Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L1522    |
 
+### DASH In-manifest Timed Metadata
+
+|       | URLS                                                                                  |
+|-------|---------------------------------------------------------------------------------------|
+| Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L1472 |
+
+### DASH MPD Chaining
+
+|       | URLS                                                                                                                                                                         |
+|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Spec  | Section 5.11 in the iso ISO/IEC 23009-1.                                                                                                                                     |
+| Shaka | https://github.com/shaka-project/shaka-player/blob/main/lib/dash/dash_parser.js#L805 <br/> https://github.com/shaka-project/shaka-player/blob/main/lib/player.js#L2657-L2677 |
 
 ### DASH In-manifest thumbnails
 
