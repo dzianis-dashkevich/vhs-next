@@ -258,15 +258,20 @@ The following existing public packages should be deprecated and archived after `
 
 ## Browsers Matrix Support
 
-|                       | Windows | MacOS | Linux | Android | iOS | iPadOS | Other |
-|-----------------------|---------|-------|-------|---------|-----|--------|-------|
-| Chrome                |         |       |       |         |     |        |       |
-| Firefox               |         |       |       |         |     |        |       |
-| Edge (Chromium)       |         |       |       |         |     |        |       |
-| Safari                |         |       |       |         |     |        |       |
-| Tizen (Chromium)      |         |       |       |         |     |        |       |
-| WebOS (Chromium)      |         |       |       |         |     |        |       |
-| Chromecast (Chromium) |         |       |       |         |     |        |       |
+|                     | Windows      | MacOS          | Linux        | Android      | iOS            | iPadOS         | Other                               |
+|---------------------|--------------|----------------|--------------|--------------|----------------|----------------|-------------------------------------|
+| Chrome              | >= 76 (2021) | >= 76 (2021)   | >= 76 (2021) | >= 76 (2021) | >= 76 (2021)   | >= 76 (2021)   | N/A                                 |
+| Firefox             | >= 85 (2021) | >= 85 (2021)   | >= 85 (2021) | >= 85 (2021) | >= 85 (2021)   | >= 85 (2021)   | N/A                                 |
+| Edge (Chromium)     | >= 76 (2021) | >= 76 (2021)   | >= 76 (2021) | >= 76 (2021) | >= 76 (2021)   | >= 76 (2021)   | N/A                                 |
+| Safari              | N/A          | >= 15.x (2021) | N/A          | N/A          | >= 15.x (2021) | >= 15.x (2021) | N/A                                 |
+| Tizen (Chromium)    | N/A          | N/A            | N/A          | N/A          | N/A            | N/A            | >= Tizen 6.x (2021, Chromium 76)    |
+| WebOS TV (Chromium) | N/A          | N/A            | N/A          | N/A          | N/A            | N/A            | >= WebOS TV 6.x (2021, Chromium 79) |
+
+> ⚠️ **Note**
+> 
+> iOS < 17.1 does not support MSE so only native playback is supported. iOS >= 17.1 supports MMSE (managed MSE)
+> 
+> IPadOS < 17.0 does not support MSE, so only native playback is supported. IPadOS >= 17.0 supports MMSE (managed MSE)
 
 # Entities
 
