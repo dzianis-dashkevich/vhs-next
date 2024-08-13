@@ -5,6 +5,7 @@
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
 * [Non-Functional Requirements](#non-functional-requirements)
+  * [Browsers Matrix Support](#browsers-matrix-support)
 * [Entities](#entities)
 * [Scenarios](#scenarios)
 * [References](#references)
@@ -233,9 +234,258 @@ The following existing public packages should be deprecated and archived after `
 
 # Non-Functional Requirements
 
-TBD: Describe non-functional Requirements, eg: build your own player, pipeline, size, etc...
+| Name                                        | VHS (current) | Priority | Notes                                                                                                                                                                                                                                                                                                                                                |
+|---------------------------------------------|---------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Events API                                  | ✅             | MUST     | Current VHS implementation provides very limited Events System. Player must provide predictable and robust set of events with extensive event data.                                                                                                                                                                                                  |
+| Errors API                                  | ✅             | MUST     | Current VHS implementation provides very limited Errors System. Player must provide predictable and robust set of errors with extensive error data. Each error must have category, code and severity info, alongside with error data (if any).                                                                                                       |
+| Configurations API                          | ✅             | MUST     | Current VHS implementation provides very limited Configurations API. Users should be able to configure different aspects of player's workflow during runtime (where possible).                                                                                                                                                                       |
+| ABR Strategies API                          | ❌             | MUST     | Current VHS implementation provides very limited ABR System. dash.js has an excellent example of ABR Strategies API. We should implement something similar.                                                                                                                                                                                          |
+| Stream API                                  | ❌             | MUST     | Player should be able to utilize browser's fetch Readable/Writable Streams API and continuously process chunks of data instead of waiting while a whole resource is loaded.                                                                                                                                                                          |
+| Interceptors API                            | ❌             | MUST     | In contrast to Events API where player notifies clients, Interceptors API allows users to intercept and modify data during important processing steps (including network requests).                                                                                                                                                                  |
+| Networking API                              | ❌             | MUST     | Users should be able to configure player networking behavior for **specific request type**: `maxAttempts`, `initialDelay`, `delayFactor`, `fuzzFactor` and `timeout`                                                                                                                                                                                 |
+| Service Locator API                         | ❌             | MUST     | Users should be able to replace ANY service managed by ServiceLocator based on their needs (including "during player runtime"). Users must implement interfaces for the services they want to replace or use service implementations provided from us. This API offers "build your own player" feature and allows extremely flexible customizations. |
+| Size: Opt-in features as separate bundles   | ❌             | MUST     | Most of the features should be provided via separate bundles and not included into main player bundle by default.                                                                                                                                                                                                                                    |
+| Size: Popular bundle presets                | ❌             | MUST     | While users can create their own player using Service Locator API, we should provide popular features bundle presets. eg: (player + hls pipeline) or (player + dash pipeline) or (player + hls and dash pipelines), etc..                                                                                                                            |
+| CLI prompt player builder                   | ❌             | SHOULD   | In case users wants to build a player with a very custom set of features or don't know exactly what features should be included they can use CLI prompt-based tool.                                                                                                                                                                                  |
+| Demo page with timeline visualization       | ❌             | COULD    | hls.js has an excellent example of timeline visualisation on their demo page. We can build something similar.                                                                                                                                                                                                                                        |
+| Live Range Recorder with Server Replay Tool | ❌             | COULD    | tool to record a problematic part from a live stream and replay (vod or live mode)                                                                                                                                                                                                                                                                   |
+| Generated API reference                     | ❌             | MUST     | N/A                                                                                                                                                                                                                                                                                                                                                  |
+| Tutorials Documentation                     | ✅             | MUST     | N/A                                                                                                                                                                                                                                                                                                                                                  |
+| Contributors Guides                         | ✅             | MUST     | N/A                                                                                                                                                                                                                                                                                                                                                  |
+| Generate Changelog                          | ✅             | MUST     | N/A                                                                                                                                                                                                                                                                                                                                                  |
+| Public Roadmap                              | ❌             | SHOULD   | We may maintain public roadmap with expected features.                                                                                                                                                                                                                                                                                               |
+
+## Browsers Matrix Support
+
+|                       | Windows | MacOS | Linux | Android | iOS | iPadOS | Other |
+|-----------------------|---------|-------|-------|---------|-----|--------|-------|
+| Chrome                |         |       |       |         |     |        |       |
+| Firefox               |         |       |       |         |     |        |       |
+| Edge (Chromium)       |         |       |       |         |     |        |       |
+| Safari                |         |       |       |         |     |        |       |
+| Tizen (Chromium)      |         |       |       |         |     |        |       |
+| WebOS (Chromium)      |         |       |       |         |     |        |       |
+| Chromecast (Chromium) |         |       |       |         |     |        |       |
 
 # Entities
+
+```ts
+// Events API
+
+enum PlayerEventType {
+  Error = 'Error'
+};
+
+interface EventTypeToEventMap {
+  [PlayerEventType.Error]: PlayerErrorEvent;
+}
+
+abstract class PlayerEvent {
+  public abstract readonly type: PlayerEventType;
+}
+
+
+class PlayerErrorEvent extends PlayerEvent {
+  type = PlayerEventType.Error;
+  error: PlayerError;
+
+  constructor(playerError: PlayerError) {
+    super();
+    this.error = playerError;
+  }
+}
+```
+
+```ts
+// Errors API
+
+enum ErrorCategory {
+  
+}
+
+enum ErrorCode {
+  
+}
+
+abstract class PlayerError {
+  public abstract readonly category: ErrorCategory;
+  public abstract readonly code: ErrorCode;
+  public abstract readonly isFatal: boolean;
+}
+```
+
+```ts
+// Interceptors API
+
+enum InterpceptorType {
+  
+}
+
+enum AsyncInterceptorType {
+  
+}
+
+interface InterceptorTypeToPayloadMap {
+  
+}
+
+interface AsyncInterceptorTypeToPayloadMap {
+  
+}
+```
+
+```ts
+// Networking API
+
+enum NetworkRequestType {
+  
+}
+
+interface NetworkingConfiguration {
+  /**
+   * The maximum number of requests before we fail.
+   * Defaults to `1`
+   */
+  maxAttempts: number;
+
+  /**
+   * The base delay in ms between retries.
+   * Defaults to `1_000`
+   */
+  initialDelay: number;
+
+  /**
+   * Increase delay for each retry: delay += (delay * delayFactor).
+   * Defaults to `0.2`
+   */
+  delayFactor: number;
+
+  /**
+   * Do not send retry requests in the exact same timing, but rather fuzz it by some range, eg: if the delay = 3000, and fuzz factor is 0.1,
+   * then the requests will be made somewhere in the following time range range: [2700, 3300].
+   * Defaults to `0.2`
+   */
+  fuzzFactor: number;
+
+  /**
+   * The timeout in ms, after which we abort.
+   * Defaults to `20_000`
+   */
+  timeout: number;
+}
+```
+
+```ts
+// Service Locator API
+
+// Service Locator API provides 3 main features:
+// - Build your own player. (Replace default fallbacks with default implementations) 
+// - Customize ANY service. (Replace default fallback or default implementations with your own implementations)
+// - access to ANY service. (You can use service locator to access any service from any place)
+
+// Each service must implement TrasferableStateProvider
+
+interface TransferableStateProvider<T> {
+  getTransferableState(): T;
+}
+
+/**
+ * Use your own implemenration example:
+ * 
+ * import { serviceLocator } from '@videojs/playback';
+ * 
+ * const currentHlsParser = serviceLocator.getHlsParser();
+ * const currentHlsParserState = currentHlsParser.getTransferableState();
+ * 
+ * // you must implement expected interface, you can optinally use serviceLocator and state in your HlsParser impl, or any other deps that you want
+ * const hlsParser = new YourHlsParserImpl({ serviceLocator, state: currentHlsParserState, customDependency: MyBusinessLogicCustomDependency });
+ * serviceLocator.replaceHlsParser(hlsParser);
+ */
+
+/**
+ * Use our default implementation example:
+ * import { serviceLocator } from '@videojs/playback';
+ * import { HlsParser } from '@videojs/hls-parser'
+ * 
+ * const currentHlsParser = serviceLocator.getHlsParser();
+ * const currentHlsParserState = currentHlsParser.getTransferableState();
+ *
+ * // implementations provided by us already imeplements expected interface
+ * const hlsParser = new HlsParser({ serviceLocator, state: currentHlsParserState });
+ */
+
+interface TrasferableStateProvider<T> {
+  getTransferableState(): T;
+}
+
+interface ServiceLocator {
+  
+}
+
+```
+
+```ts
+interface PlayerConfiguration {
+  
+}
+```
+
+```ts
+type EventHandler<T> = (event: T) => void;
+
+type Interceptor<T> = (payload: T) => T;
+
+type AsyncInterceptor<T> = (payload: T) => Promise<T>;
+
+interface Player {
+  // Configurations API
+  
+  // get deep copy of the current configuration
+  getConfigurationSnapshot(): PlayerConfiguration;
+  // update current configuration
+  updateConfiguration(configurationChunk: DeepPartial<PlayerConfiguration>): void;
+  // reset configuration to default
+  resetConfiguration(): void;
+
+  // Events API
+  // Errors API is available via PlayerErrorEvent
+
+  // register event handler for specific event
+  addEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // register event handler for all events '*', mainly for debug purposes
+  addEventListenerForAllEvents(eventHandler: EventHandler<PlayerEvent>): void;
+  // register event handler for specific events once
+  once<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // remove specific registered event handler for specific event
+  removeEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // remove all registered event handlers for specific event
+  removeAllEventListenersForType<K extends PlayerEventType>(eventType: K): void;
+  // remove all registered event handlers for all events
+  removeAllEventListeners(): void;
+
+  // Interceptors API
+
+  // register interceptor for a specific player's processing step. (sync)
+  addInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
+  // register interceptor for a specific player's processing step. (async, some steps can be processed as async, so we should have a separate api)
+  addAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
+  // remove specific interceptor for specific step (sync)
+  removeInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
+  // remove specific interceptor for specific step (async)
+  removeAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
+  // remove all interceptors
+  removeAllInterceptors(): void;
+
+  // Networking API
+
+  // update networking configuration for specific request type
+  updateNetworkingConfiguration(requestType: NetworkRequestType, networkingConfiguration: NetworkingConfiguration): void;
+  // reset networking configuration to default values for specific request type
+  resetNetworkingConfiguration(requestType: NetworkRequestType): void;
+  // reset networking configurations for all reques types
+  resetAllNetworkingConfigurations(): void;
+}
+```
 
 TBD: Describe entities and their relations
 TBD: support loading external WebVTT with subtitles for VOD
