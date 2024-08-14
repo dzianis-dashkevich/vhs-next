@@ -4,9 +4,11 @@
 * [Motivation](#motivation)
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
-* [Non-Functional Requirements](#non-functional-requirements)
+* [Non-Functional Requirements and DX](#non-functional-requirements-and-dx)
   * [Browsers Matrix Support](#browsers-matrix-support)
 * [Entities](#entities)
+  * [Entities and their boundaries (high-level diagram)](#entities-and-their-boundaries-high-level-diagram)
+  * [Player (Facade)](#player-facade)
 * [Scenarios](#scenarios)
 * [References](#references)
     * [HLS Key Rotation](#hls-key-rotation)
@@ -232,13 +234,15 @@ The following existing public packages should be deprecated and archived after `
 | IndexDB VOD persistence                                     | ❌             | SHOULD   | N/A                                                                                                                                                                                                                                     | [offline](#offline)                                                         |
 | Offline DRM                                                 | ❌             | SHOULD   | support persisentState="required", sessionType="persistent-license" and mediaKeySession.load(sessionId)                                                                                                                                 | [offline](#offline)                                                         |
 
-# Non-Functional Requirements
+# Non-Functional Requirements and DX
 
 | Name                                        | VHS (current) | Priority | Notes                                                                                                                                                                                                                                                                                                                                                |
 |---------------------------------------------|---------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Events API                                  | ✅             | MUST     | Current VHS implementation provides very limited Events System. Player must provide predictable and robust set of events with extensive event data.                                                                                                                                                                                                  |
 | Errors API                                  | ✅             | MUST     | Current VHS implementation provides very limited Errors System. Player must provide predictable and robust set of errors with extensive error data. Each error must have category, code and severity info, alongside with error data (if any).                                                                                                       |
 | Configurations API                          | ✅             | MUST     | Current VHS implementation provides very limited Configurations API. Users should be able to configure different aspects of player's workflow during runtime (where possible).                                                                                                                                                                       |
+| Env Capabilities API                        | ❌             | MUST     | Player must provide probe env capabilities API                                                                                                                                                                                                                                                                                                       |
+| Debug API                                   | ✅             | MUST     | Player must provide debug related APIs (eg: logger levels)                                                                                                                                                                                                                                                                                           |
 | ABR Strategies API                          | ❌             | MUST     | Current VHS implementation provides very limited ABR System. dash.js has an excellent example of ABR Strategies API. We should implement something similar.                                                                                                                                                                                          |
 | Stream API                                  | ❌             | MUST     | Player should be able to utilize browser's fetch Readable/Writable Streams API and continuously process chunks of data instead of waiting while a whole resource is loaded.                                                                                                                                                                          |
 | Managed Media Source API                    | ❌             | MUST     | https://www.w3.org/TR/media-source-2/#managedmediasource-interface currently supported only on Safari (mac, ios, ipados) 17+                                                                                                                                                                                                                         |
@@ -274,6 +278,236 @@ The following existing public packages should be deprecated and archived after `
 > IPadOS < 17.0 does not support MSE, so only native playback is supported. IPadOS >= 17.0 supports MMSE (managed MSE)
 
 # Entities
+
+This section describes entities, their relationship and boundaries with possible API examples.
+
+> ⚠️ **Note**
+>
+> Entities APIs/Names/boundaries outlined in this document are not final.
+> 
+> Not all methods/getters/setters/enums/consts are listed for a given entity.
+> 
+> Some entities could represent a group of low-level entities.
+> 
+> This is just an example to provide an overall idea.
+
+## Entities and their boundaries (high-level diagram)
+
+![entities-boundaries](./resources/entities-boundaries.svg)
+
+## Player (Facade)
+
+Player facade is a main API gateway for almost all features provided by our playback engine. The main purpose is to simplify client's usage and hide complexity.
+
+```ts
+type EventHandler<T> = (event: T) => void;
+
+type Interceptor<T> = (payload: T) => T;
+
+type AsyncInterceptor<T> = (payload: T) => Promise<T>;
+
+interface KeySystemConfig {
+  licenseServerUri: string;
+  serverCertificateUri?: string;
+  serverCertificate?: Uint8Array;
+  persistentState?: MediaKeysRequirement;
+  distinctiveIdentifier?: MediaKeysRequirement;
+  videoRobustness?: string;
+  audioRobustness?: string;
+  sessionType?: MediaKeySessionType;
+  getContentId?: (contentId: string) => string;
+}
+
+type SourceKeySystems = Record<string, KeySystemConfig>;
+
+interface Source {
+  mimeType: string;
+  url: string;
+  keySystems?: SourceKeySystems;
+}
+
+interface Player {
+  // Version API
+
+  // get current player's version
+  getVersion(): string;
+  // get current player's version hash
+  getVersionHash(): string;
+
+  // Service Locator API
+  
+  getServiceLocator(): ServiceLocator;
+
+  // Configuration API
+
+  // get deep copy of the current configuration
+  getConfigurationSnapshot(): PlayerConfiguration;
+  // update current configuration
+  updateConfiguration(configurationChunk: DeepPartial<PlayerConfiguration>): void;
+  // reset configuration to default
+  resetConfiguration(): void;
+  
+  // Debug API
+  
+  // get current logger level
+  getLoggerLevel(): LoggerLevel;
+  // set logger level
+  setLoggerLevel(loggerLevel: LoggerLevel): void;
+  
+  // Pipeline API
+  
+  // Add or replace pipeline for specific mime type, added pipeline will be called during "load" for a given mimeType
+  addPipeline(mimeType: string, pipeline: Pipeline): void;
+  // Remove pipeline for a specific mimeType
+  removePipeline(mimeType: string, pipeline: Pipeline): void;
+  
+  // Life Cycle API
+  
+  // attach player to the video element that has already been defined in the DOM
+  attach(videoElement: HTMLVideoElement): void;
+  // get current video element
+  getCurrentVideoElement(): HTMLVideoElement | null;
+  // detach player from the current video element
+  detach(): void;
+  // stop current playback and transition to idle state
+  stop(): void;
+  // cleanup all services and destroy player itself
+  destroy(): void;
+  // load provided source, create processing pipeline based on mime type and transition to loading state
+  load(source: Source): void;
+  // get active source
+  getCurrentSource(): Source | null;
+  
+  // Playback API
+  
+  // initiate / continue playback --> forward call to pipeline
+  play(): void;
+  // pause current playback --> forward call to pipeline
+  pause(): void;
+  // seek to the seek target, should return false if seek target is out of any seekable ranges
+  seek(seekTarget: number): boolean;
+  // get current time
+  getCurrentTime(): number;
+  // get current playback rate
+  getPlaybackRate(): number;
+  // set current playback rate
+  setPlaybackRate(rate: number): void;
+  // mute current playback
+  mute(): void;
+  // unmute current playback
+  unmute(): void;
+  // get current volume level
+  getVolumeLevel(): number;
+  // set current volume level (clamp [0-1])
+  setVolumeLevel(level: number): void;
+  // get current playback duration (from the pipeline)
+  getDuration(): number;
+  // get current player state
+  getCurrentPlayerState(): PlayerState;
+  // get muted state
+  getIsMuted(): boolean;
+  // get snapshot of the buffered ranges from the current pipeline
+  getBufferedRanges(): Array<PlayerTimeRange>;
+  // get active buffered range
+  getActiveBufferedRange(): PlayerTimeRange | null;
+  // get snapshot of the seekable ranges from the current pipeline
+  getSeekableRanges(): Array<SeekableRange>;
+  
+  // Playback API: Audio Tracks
+  
+  // get snapshot of the audio tracks from the current pipeline
+  getAudioTracks(): Array<AudioTrack>;
+  // get currently active audio track
+  getActiveAudioTrack(): AudioTrack | null;
+  // select audio track --> forward call to pipeline
+  selectAudioTrack(audioTrack: AudioTrack): void;
+
+  // Playback API: Text Tracks
+
+  // get text tracks from the current pipeline
+  getTextTracks(): Array<TextTrack>;
+  // get active text track
+  getActiveTextTrack(): TextTrack | null;
+  // select text track --> forward call to pipeline
+  selectTextTrack(track: TextTrack): void;
+  // add remote vtt text track (only VOD), should return false for live --> forward call to pipeline
+  addRemoteTextTrack(remoteTextTrackOptions: RemoteTextTrackOptions): boolean;
+  // remove remote vtt text track (only VOD), should return false for live --> forward call to pipeline
+  removeRemoteTextTrack(textTrack: TextTrack): boolean;
+
+  // Playback API: Thumbnails Tracks
+
+  // get thumbnails tracks from the current pipeline
+  getThumbnailTracks(): Array<ThumbnailTrack>;
+  // get active thumbnail track
+  getActiveThumbnailTrack(): ThumbnailTrack | null;
+  // select thumbnails track --> forward call to pipeline
+  selectThumbnailTrack(thumbnailTrack: ThumbnailTrack): void;
+  // add remote vtt thumbnail track (only VOD), should return false for live --> forward call to pipeline
+  addRemoteThumbnailTrack(remoteThumbnailTrackOptions: RemoteThumbnailTrackOptions): boolean;
+  // remove remote vtt thumbnail track (only VOD), should return false for live --> forward call to pipeline
+  removeRemoteThumbnailTrack(thumbnailTrack: ThumbnailTrack): boolean;
+
+  // Playback API: Metadata Tracks
+  // get metadata tracks from the current pipeline (in-manifest timed-metadata, in-segment timed metadata)
+  getMetadataTrack(): MetadataTrack;
+
+  // Playback API: Quality Levels
+  
+  // get all quality levels available for main track (video+audio, video-only, audio-only)
+  getQualityLevels(): Array<QualityLevel>;
+  // get current active quality level
+  getActiveQualityLevel(): QualityLevel | null;
+  // select active quality level --> this will disable ABR
+  selectQualityLevel(level: QualityLevel): void;
+  // enable ABR
+  selectAutoQualityLevel(): void;
+
+  // Events API
+  // Errors API is available via PlayerErrorEvent
+
+  // register event handler for specific event
+  addEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // register event handler for all events '*', mainly for debug purposes
+  addEventListenerForAllEvents(eventHandler: EventHandler<PlayerEvent>): void;
+  // register event handler for specific events once
+  once<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // remove specific registered event handler for specific event
+  removeEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
+  // remove all registered event handlers for specific event
+  removeAllEventListenersForType<K extends PlayerEventType>(eventType: K): void;
+  // remove all registered event handlers for all events
+  removeAllEventListeners(): void;
+
+  // Interceptors API
+
+  // register interceptor for a specific player's processing step. (sync)
+  addInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
+  // register interceptor for a specific player's processing step. (async, some steps can be processed as async, so we should have a separate api)
+  addAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
+  // remove specific interceptor for specific step (sync)
+  removeInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
+  // remove specific interceptor for specific step (async)
+  removeAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
+  // remove all interceptors
+  removeAllInterceptors(): void;
+
+  // Networking API
+
+  // update networking configuration for specific request type
+  updateNetworkingConfiguration(requestType: NetworkRequestType, networkingConfiguration: NetworkingConfiguration): void;
+  // reset networking configuration to default values for specific request type
+  resetNetworkingConfiguration(requestType: NetworkRequestType): void;
+  // reset networking configurations for all reques types
+  resetAllNetworkingConfigurations(): void;
+  
+  // Env capabilities API
+  
+  // probe current env capabilities
+  probeEnvCapabilities(): Promise<CapabilitiesProbeResult>
+}
+```
+
 
 ```ts
 // Events API
@@ -390,9 +624,14 @@ interface NetworkingConfiguration {
 // - access to ANY service. (You can use service locator to access any service from any place)
 
 // Each service must implement TrasferableStateProvider
+// Each service must implement Destroyable
 
 interface TransferableStateProvider<T> {
   getTransferableState(): T;
+}
+
+interface Destroyable {
+  destroy(): void;
 }
 
 /**
@@ -435,67 +674,6 @@ interface PlayerConfiguration {
   
 }
 ```
-
-```ts
-type EventHandler<T> = (event: T) => void;
-
-type Interceptor<T> = (payload: T) => T;
-
-type AsyncInterceptor<T> = (payload: T) => Promise<T>;
-
-interface Player {
-  // Configurations API
-  
-  // get deep copy of the current configuration
-  getConfigurationSnapshot(): PlayerConfiguration;
-  // update current configuration
-  updateConfiguration(configurationChunk: DeepPartial<PlayerConfiguration>): void;
-  // reset configuration to default
-  resetConfiguration(): void;
-
-  // Events API
-  // Errors API is available via PlayerErrorEvent
-
-  // register event handler for specific event
-  addEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
-  // register event handler for all events '*', mainly for debug purposes
-  addEventListenerForAllEvents(eventHandler: EventHandler<PlayerEvent>): void;
-  // register event handler for specific events once
-  once<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
-  // remove specific registered event handler for specific event
-  removeEventListener<K extends PlayerEventType>(eventType: K, eventHandler: EventHandler<EventTypeToEventMap[K]>): void;
-  // remove all registered event handlers for specific event
-  removeAllEventListenersForType<K extends PlayerEventType>(eventType: K): void;
-  // remove all registered event handlers for all events
-  removeAllEventListeners(): void;
-
-  // Interceptors API
-
-  // register interceptor for a specific player's processing step. (sync)
-  addInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
-  // register interceptor for a specific player's processing step. (async, some steps can be processed as async, so we should have a separate api)
-  addAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
-  // remove specific interceptor for specific step (sync)
-  removeInterceptor<K extends InterpceptorType>(interceptorType: K, interceptor: Interceptor<InterceptorTypeToPayloadMap[K]>): void;
-  // remove specific interceptor for specific step (async)
-  removeAsyncInterceptor<K extends AsyncInterceptorType>(interceptorType: K, interceptor: AsyncInterceptor<AsyncInterceptorTypeToPayloadMap[K]>): void;
-  // remove all interceptors
-  removeAllInterceptors(): void;
-
-  // Networking API
-
-  // update networking configuration for specific request type
-  updateNetworkingConfiguration(requestType: NetworkRequestType, networkingConfiguration: NetworkingConfiguration): void;
-  // reset networking configuration to default values for specific request type
-  resetNetworkingConfiguration(requestType: NetworkRequestType): void;
-  // reset networking configurations for all reques types
-  resetAllNetworkingConfigurations(): void;
-}
-```
-
-TBD: Describe entities and their relations
-TBD: support loading external WebVTT with subtitles for VOD
-TBD: support loading external WebVTT with image/sprites for VOD
 
 # Scenarios
 
