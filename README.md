@@ -353,14 +353,7 @@ interface Player {
   getLoggerLevel(): LoggerLevel;
   // set logger level
   setLoggerLevel(loggerLevel: LoggerLevel): void;
-  
-  // Pipeline API
-  
-  // Add or replace pipeline for specific mime type, added pipeline will be called during "load" for a given mimeType
-  addPipeline(mimeType: string, pipeline: Pipeline): void;
-  // Remove pipeline for a specific mimeType
-  removePipeline(mimeType: string, pipeline: Pipeline): void;
-  
+
   // Life Cycle API
   
   // attach player to the video element that has already been defined in the DOM
@@ -508,77 +501,190 @@ interface Player {
 }
 ```
 
+## ServiceLocator
+
+ServiceLocator is a main entity to locate and update services.
+
+By default, player should have very limited functionality and support only native playback. ServiceLocator is initialized with fallback service.
+
+ServiceLocator provides 3 main features:
+- Build your own player. (Replace default fallbacks with default "our" implementations)
+- Customize ANY service. (Replace default fallback or default "our" implementations with your own implementations)
+- Access to ANY service. (Player and other services will use service locator to access other services. Clients can also use service locator to access any service)
+
+
+### Usage Example 1 (Access Service and use it)
 
 ```ts
-// Events API
+import { Player } from '@videojs/playback';
 
-enum PlayerEventType {
-  Error = 'Error'
-};
+const player = new Player();
+const serviceLocator = player.getServiceLocator();
+const hlsParser = serviceLocator.getHlsParser();
 
-interface EventTypeToEventMap {
-  [PlayerEventType.Error]: PlayerErrorEvent;
+hlsParser.parse(playlist);
+```
+
+### Usage Example 2 (Build your own player)
+
+```ts
+import { HlsParser } from '@videojs/hls-parser';
+import { Player } from '@videojs/playback';
+import { HlsPipeline } from '@videojs/playback/pipelines/mse/hls';
+
+const player = new Player();
+const serviceLocator = player.getServiceLocator();
+const pipelineProvider = serviceLocator.getPipelineProvider();
+const hlsPipeline = new HlsPipeline({ serviceLocator });
+const hlsParser = new HlsParser({ serviceLocator });
+serviceLocator.replaceHlsParser(hlsParser);
+
+pipelineProvider.addPipeline(Player.MimeType.HLS_VND_APPLE_MPEG_URL, hlsPipeline);
+pipelineProvider.addPipeline(Player.MimeType.HLS_X_MPEG_URL, hlsPipeline);
+```
+
+### Usage Example 3 (Use your own services, customizations)
+
+```ts
+import { YourHlsParser, YourHlsPipeline } from 'your-app';
+import { Player } from '@videojs/playback';
+
+// NOTE: 
+// YourHlsParser or YourHlsPipeline (or any other services) 
+// could be extensions from our implementations 
+// or completely independent implementations (It should not necessarily be a class. it could be an object with properties.)
+// It does not matter.
+// All we care about is that provided implementation conforms with the expected interface.
+
+const player = new Player();
+const serviceLocator = player.getServiceLocator();
+const pipelineProvider = serviceLocator.getPipelineProvider();
+// you can use serviceLocator or dont use it, or any other dependencies, whatever your implementation looks like
+const hlsPipeline = new YourHlsPipeline({ serviceLocator, ...anyOtherDependencies });
+// you can use serviceLocator or dont use it, or any other dependencies, whatever your implementation looks like
+const hlsParser = new YourHlsParser({ serviceLocator, ...anyOtherDependencies });
+// NOTE: YourHlsParser must implement required interface to be able to set it
+serviceLocator.replaceHlsParser(hlsParser);
+// NOTE: YourHlsPipeline must implement required interface to be able to set it
+pipelineProvider.addPipeline(Player.MimeType.HLS_VND_APPLE_MPEG_URL, hlsPipeline);
+// NOTE: YourHlsPipeline must implement required interface to be able to set it
+pipelineProvider.addPipeline(Player.MimeType.HLS_X_MPEG_URL, hlsPipeline);
+```
+
+### Usage Example 4 (Transfer State)
+
+```ts
+import { YourHlsParser } from 'your-app';
+
+//...
+
+const player = new Player();
+const serviceLocator = player.getServiceLocator();
+const currentHlsParser = serviceLocator.getHlsParser();
+
+const currentHlsParserState = currentHlsParser.getTransferableState();
+// you can use this state:
+const newHlsParser = new YourHlsParser({ serviceLocator, ...currentHlsParserState, ...anyOtherDependencies })
+
+//...
+```
+
+
+```ts
+// Service Locator API
+
+interface Service<T, C> {
+  // Generate internal state snapshot as transferable object. Users can use this method if they want to replace service during runtime.
+  getTransferableState(): T;
+  // Player will forward update configuration call to service locator, and service locator will forward to all service. Services can react on configuration changes.
+  updateConfiguration(configurationChunk: DeepPartial<C>): void;
+  // Player will forward attach call to service locator, and service locator will forward to all services. Services can listent to event from video element.
+  attach(videoElement: HTMLVideoElement): void;
+  // Player will forward detach call to service locator, and service locator will forward to all services. Services can cleanup events from video element.
+  detach(): void;
+  // Player will forward detroy call to service locator, and service locator will forward to all services. Services can cleanup all events, timers, state, etc...
+  destroy(): void;
 }
 
-abstract class PlayerEvent {
-  public abstract readonly type: PlayerEventType;
+interface ServiceLocator {
+  // Each service should have 2 possible methods withing service locator: get, replace. Examples:
+  
+  // ...
+  
+  getPipelineProvider(): PipelineProvider;
+  
+  replacePipelineProvider(provider: PiplineProvider): void;
+  
+  getHlsParser(): HlsParser;
+  
+  replaceHlsParser(parser: HlsParser): void;
+  
+  getDashParser(): DashParser;
+  
+  replaceDashParser(parser: DashParser): void;
+  
+  getNetworkingManager(): NetworkingManager;
+  
+  replaceNetworkingManager(networkingManager: NetworkingManager): void;
+  
+  getAbrManager(): AbrManager;
+  
+  replaceAbrManager()
+
+  // ...
 }
 
+```
 
-class PlayerErrorEvent extends PlayerEvent {
-  type = PlayerEventType.Error;
-  error: PlayerError;
+### PipelineProvider
 
-  constructor(playerError: PlayerError) {
-    super();
-    this.error = playerError;
-  }
+Pipeline provider allows registering custom pipelines for specific mimeTypes. Player will use it during load.
+
+```ts
+interface PipelineProvider {
+  // Add or replace pipeline for specific mime type, added pipeline will be called during "load" for a given mimeType
+  addPipeline(mimeType: string, pipeline: Pipeline): void;
+  // Remove pipeline for a specific mimeType
+  removePipeline(mimeType: string, pipeline: Pipeline): void;
+  // get pipeline for a given mimeType
+  getPipelineFor(mimeType: string): Pipeline | null;
 }
 ```
 
+### AbrManager
+
+AbrManager should control adaptation sets switching based on the registered abr rules.
+we should provide default EWMA rule.
+
 ```ts
-// Errors API
-
-enum ErrorCategory {
-  
-}
-
-enum ErrorCode {
-  
-}
-
-abstract class PlayerError {
-  public abstract readonly category: ErrorCategory;
-  public abstract readonly code: ErrorCode;
-  public abstract readonly isFatal: boolean;
+interface AbrManager {
+  // add abr rule
+  addAbrRule(rule: AbrRule): void;
+  // remove abr rule
+  removeAbrRule(rule: AbrRule): void;
+  // get all registered rules
+  getRules(): Array<AbrRule>;
 }
 ```
 
-```ts
-// Interceptors API
+### NetworkingManager
 
-enum InterpceptorType {
-  
-}
-
-enum AsyncInterceptorType {
-  
-}
-
-interface InterceptorTypeToPayloadMap {
-  
-}
-
-interface AsyncInterceptorTypeToPayloadMap {
-  
-}
-```
+NetworkingManager is a high level abstraction over browser's fetch API. 
+- Must support Streams API to stream chunks of data from the network. 
+- Must execute interceptors for `InterceptorType.NetworkRequestStart` to modify request payload, `InterceptorType.NetworkRequestComplete` to modify response payload, `InterceptorType.NetworkRequestFailed` to modify failed response payload.
+- Must trigger `Event.NetworkRequestStart`, `Event.NetworkRequestComplete`, `Event.NetworkRequestFailed` events with corresponding event payloads.
 
 ```ts
-// Networking API
 
 enum NetworkRequestType {
-  
+  HlsMasterPlaylist,
+  HlsMediaPlaylist,
+  DashManifest,
+  ContentSteering,
+  License,
+  key,
+  InitSegment,
+  MediaSegment
 }
 
 interface NetworkingConfiguration {
@@ -613,65 +719,97 @@ interface NetworkingConfiguration {
    */
   timeout: number;
 }
-```
-
-```ts
-// Service Locator API
-
-// Service Locator API provides 3 main features:
-// - Build your own player. (Replace default fallbacks with default implementations) 
-// - Customize ANY service. (Replace default fallback or default implementations with your own implementations)
-// - access to ANY service. (You can use service locator to access any service from any place)
-
-// Each service must implement TrasferableStateProvider
-// Each service must implement Destroyable
-
-interface TransferableStateProvider<T> {
-  getTransferableState(): T;
-}
-
-interface Destroyable {
-  destroy(): void;
-}
-
-/**
- * Use your own implemenration example:
- * 
- * import { serviceLocator } from '@videojs/playback';
- * 
- * const currentHlsParser = serviceLocator.getHlsParser();
- * const currentHlsParserState = currentHlsParser.getTransferableState();
- * 
- * // you must implement expected interface, you can optinally use serviceLocator and state in your HlsParser impl, or any other deps that you want
- * const hlsParser = new YourHlsParserImpl({ serviceLocator, state: currentHlsParserState, customDependency: MyBusinessLogicCustomDependency });
- * serviceLocator.replaceHlsParser(hlsParser);
- */
-
-/**
- * Use our default implementation example:
- * import { serviceLocator } from '@videojs/playback';
- * import { HlsParser } from '@videojs/hls-parser'
- * 
- * const currentHlsParser = serviceLocator.getHlsParser();
- * const currentHlsParserState = currentHlsParser.getTransferableState();
- *
- * // implementations provided by us already imeplements expected interface
- * const hlsParser = new HlsParser({ serviceLocator, state: currentHlsParserState });
- */
-
-interface TrasferableStateProvider<T> {
-  getTransferableState(): T;
-}
-
-interface ServiceLocator {
-  
-}
 
 ```
 
+### Events API
+
 ```ts
-interface PlayerConfiguration {
-  
+// Events API
+
+// Note: not all events are listed, it is just an example
+
+enum PlayerEventType {
+  Error = 'Error'
+};
+
+// mapping for types purposes
+interface EventTypeToEventMap {
+  [PlayerEventType.Error]: PlayerErrorEvent;
+}
+
+abstract class PlayerEvent {
+  public abstract readonly type: PlayerEventType;
+}
+
+
+class PlayerErrorEvent extends PlayerEvent {
+  type = PlayerEventType.Error;
+  error: PlayerError;
+
+  constructor(playerError: PlayerError) {
+    super();
+    this.error = playerError;
+  }
+}
+```
+
+### Errors API
+
+```ts
+// Errors API
+
+// Note: not all events are listed, it is just an example
+
+enum ErrorCategory {
+  Hls = 1,
+}
+
+enum ErrorCode {
+  FailedToParseHlsPlaylist = 1000,
+}
+
+abstract class PlayerError {
+  public abstract readonly category: ErrorCategory;
+  public abstract readonly code: ErrorCode;
+  public abstract readonly isFatal: boolean;
+}
+
+abstract class HlsPlayerError extends PlayerError {
+  category = ErrorCategory.Hls;
+}
+
+class FailedToParseHlsPlaylistPlayerError extends HlsPlayerError {
+  code = ErrorCode.FailedToParseHlsPlaylist;
+  public readonly reason: string;
+
+  constructor(reason: string, isFatal: boolean) {
+    super();
+    this.reason = reason;
+    this.isFatal = isFatal;
+  }
+}
+```
+
+```ts
+// Interceptors API
+
+// Note: not all interceptors types are listed, it is just an example
+
+enum InterpceptorType {
+  NetworkRequestStart = 'NetworkRequestStart'
+}
+
+enum AsyncInterceptorType {
+  NetworkRequestStart = 'NetworkRequestStart'
+}
+
+interface InterceptorTypeToPayloadMap {
+  [InterpceptorType.NetworkRequestStart]: NetworkRequest
+}
+
+interface AsyncInterceptorTypeToPayloadMap {
+  [InterpceptorType.NetworkRequestStart]: NetworkRequest
 }
 ```
 
