@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+skin rose
+
+actor User
+participant Player
+participant Emitter
+participant PipelineProvider
+participant HlsPipeline
+participant AbrManager
+participant CMCDManager
+participant CMSDManager
+participant ContentSteeringManager
+participant Interceptors
+participant NetworkingManager
+participant CDN
+
+User --> Player: subscribe:events
+Player --> Emitter: subscribe: events
+User --> Player: load(source)
+Player --> PipelineProvider: mimeType
+alt
+PipelineProvider --> Player: null
+Player --> Emitter: trigger:error
+end
+PipelineProvider --> Player: pipeline
+Player --> HlsPipeline: start(source)
+HlsPipeline --> CMCDManager: request
+CMCDManager --> HlsPipeline: request
+HlsPipeline --> NetworkingManager: request
+NetworkingManager --> Interceptors: request
+Interceptors --> NetworkingManager: request
+NetworkingManager --> CDN: request
+alt
+CDN --> NetworkingManager: response:failed
+NetworkingManager --> Interceptors: response:failed
+Interceptors --> NetworkingManager: response:failed
+NetworkingManager --> HlsPipeline: response:failed
+HlsPipeline --> Emitter: trigger:error
+end
+CDN --> NetworkingManager: response
+NetworkingManager --> Interceptors: response
+Interceptors --> NetworkingManager: response
+NetworkingManager --> HlsPipeline: response
+HlsPipeline --> CMSDManager: response
+CMSDManager --> HlsPipeline: Server Data
+HlsPipeline --> AbrManager: Server Data
+alt MASTER PLAYLIST
+HlsPipeline --> ContentSteeringManager: Server URI
+ContentSteeringManager --> NetworkingManager: start polling
+note over ContentSteeringManager, Interceptors
+content steering polling
+is out of scope
+for this diagram
+end note
+
+HlsPipeline --> HlsPipeline: group media into adaptation sets
+HlsPipeline --> AbrManager: get initial bandwidth
+AbrManager --> HlsPipeline: initial bandwidth
+HlsPipeline --> HlsPipeline: select initial adaptation set
+else MEDIA PLAYLIST
+HlsPipeline --> HlsPipeline: create single adaptation set
+end
+
+HlsPipeline --> HlsPipeline: create VOD timeline
+note left
+VOD by default
+end note
+
+@enduml

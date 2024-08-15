@@ -9,7 +9,21 @@
 * [Entities](#entities)
   * [Entities and their boundaries (high-level diagram)](#entities-and-their-boundaries-high-level-diagram)
   * [Player (Facade)](#player-facade)
+  * [ServiceLocator](#servicelocator)
+    * [Usage Example 1 (Access Service and use it)](#usage-example-1-access-service-and-use-it)
+    * [Usage Example 2 (Build your own player)](#usage-example-2-build-your-own-player)
+    * [Usage Example 3 (Use your own services, customizations)](#usage-example-3-use-your-own-services-customizations)
+    * [Usage Example 4 (Transfer State)](#usage-example-4-transfer-state)
+    * [PipelineProvider](#pipelineprovider)
+    * [AbrManager](#abrmanager)
+    * [NetworkingManager](#networkingmanager)
+    * [Events API](#events-api)
+    * [Errors API](#errors-api)
 * [Scenarios](#scenarios)
+  * [HLS VOD (load)](#hls-vod-load)
+  * [HLS VOD (Manual Quality Switch)](#hls-vod-manual-quality-switch)
+  * [HLS VOD (ABR Quality Switch)](#hls-vod-abr-quality-switch)
+  * [HLS VOD (Seek out of buffer)](#hls-vod-seek-out-of-buffer)
 * [References](#references)
     * [HLS Key Rotation](#hls-key-rotation)
     * [HLS Server Control](#hls-server-control)
@@ -815,7 +829,20 @@ interface AsyncInterceptorTypeToPayloadMap {
 
 # Scenarios
 
-TBD: Describe Scenarios with flow charts and comments (where possible use connections to FRs and NFRs)
+## HLS VOD (load)
+![hls-vod-load](./resources/hls-vod-load.svg)
+
+## HLS VOD (Manual Quality Switch)
+
+TBD
+
+## HLS VOD (ABR Quality Switch)
+
+TBD
+
+## HLS VOD (Seek out of buffer)
+
+TBD
 
 # References
 
