@@ -846,14 +846,75 @@ interface AsyncInterceptorTypeToPayloadMap {
 
 # Scenarios
 
+## Applicable for each scenario
+
+- We should always demux main with audio and video. This will help us with switching alternative audio without reloading the whole video part.
+- We should always override original timestamps according to player's timeline. This will help us with cases when we have to re-calculate timestampOffset during discontinuities or switching between representation with and without rollovers. This will also help us with avoiding gaps.
+- We should always use index-based approach when continuously loading segments within one rendition group. We should use buffered.end as a start pts/dts for the next segment to load.
+
 ## HLS VOD (load)
-![hls-vod-load](./resources/hls-vod-load.svg)
 
-## HLS VOD (Manual Quality Switch)
+Let's assume we have VOD stream with main (as video), alternative audio, subtitles and images (thumbnails or trick-play).
 
-TBD
+I added discontinuities and rollovers to cover complex example:
 
-## HLS VOD (ABR Quality Switch)
+`Player Timeline` is built based on the first `main` occurrence. This timeline should reflect what user see on UI.
+
+`Start Time` is the value provided by the client during load (default value is `0`).
+
+`Main Timeline` reflects `main` playlist. (ext-x-stream-inf, could be `video+audio`, `video-only` or `audio-only`).
+
+`Audio Timeline` reflects alternative audio playlist (ext-x-media, type="audio") or demuxed audio from `main`.
+
+`Text Timeline` reflects subtitles playlist (ext-x-media, type="subtitles"") or closed-captions (cea-608/708).
+
+`Image Timeline` reflects image playlist (ext-x-image-stream-inf) or (ext-x-iframe-stream-inf)
+
+
+Once user loaded a source, we group renditions into Renditions Groups, select appropriate rendition group by initial bandwidth. Once main media playlist is loaded we should create a `PlayerTimeline`. We should select first segments to load based on `Start Time`.
+
+![hls-vod-load-timelines](./resources/hls-vod-load-timelines.svg)
+
+## HLS VOD (Continuous loading within one rendition group)
+
+`BufferBehind` is configurable value of seconds to keep in the buffer behind the play head. Everything else will be removed from the buffer.
+
+`BufferAhead` is configurable value of seconds to buffer ahead of the play head. (buffer goal).
+
+In the following example we're continuously loading segments within one rendition group. 
+- We select next segment using `++index` approach.
+- We should use `buffered.end` as a start pts/dts for next segment.
+- We don't care about discontinuities or rollover since we override original timestamps, but we still have to reset parsers that may have in-memory data and can parse through multiple segments (such as cea-608/708).
+
+So, In this particular example:
+
+`MainTimeline` buffered segment 2 and 3. Both are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segment 4 and 5 to cover `BufferAhead`.
+
+`AudioTimeline` buffered 3, 4 and 5. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 6, 7, 8, 9, 10 to cover `BufferAhead`.
+
+`TextTimeline` buffered 5,6,7,8,9,10,11. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 12,13,14,15,16,17,28,19 to cover `BufferAhead`.
+
+`Image Timeline` buffered 1 and 2. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 3 to cover `BufferAhead`.
+
+if user paused player it should not pause loading segment (till buffer goal is reached), unless explicitly specified in the player's configuration (`stopLoadingSegmentsWhenPaused`)
+
+![hls-vod-continuous-loading-within-one-rendition-group](./resources/hls-vod-continuous-loading-within-one-rendition-group.svg)
+
+## HLS VOD (Manual Quality Switching)
+
+Each `RenditionGroup` implements `transition` method, which expects destination rendition group and transition reason.
+
+When user manually switching quality, we have to replace buffer around the current time (user should see instant quality update).
+
+In the following example, destination rendition group has different audio (different group-id), so we have to reset audio buffer as well. But it has the same group-id for subtitles and image timeline always stays the same, so we don't have to clear them.
+
+Once we loaded main and alternative audio playlist we should select segment to load. We should use the same algorithm we used for the first load: 
+- `PlayerTimeline.getSegment(mainTimeline, currentTime)`: in the current example this should resolve to segment `3`
+- `PlayerTimeline.getSegment(audioTimeline, currentTime)`: in the current example this should resolve to segment `6`
+
+![hls-vod-manual-quality-switching](./resources/hls-vod-manual-quality-switching.svg)
+
+## HLS VOD (ABR Quality Switching)
 
 TBD
 
