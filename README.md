@@ -904,11 +904,11 @@ if user paused player it should not pause loading segment (till buffer goal is r
 
 Each `RenditionGroup` implements `transition` method, which expects destination rendition group and transition reason.
 
-When user manually switching quality, we have to replace buffer around the current time (user should see instant quality update).
+When user manually switches quality, we have to replace buffer around the current time (user should see instant quality update).
 
 In the following example, destination rendition group has different audio (different group-id), so we have to reset audio buffer as well. But it has the same group-id for subtitles and image timeline always stays the same, so we don't have to clear them.
 
-Once we loaded main and alternative audio playlist we should select segment to load. We should use the same algorithm we used for the first load: 
+Once we loaded main and alternative audio playlists we should select segment to load. We should use the same algorithm we used for the first load: 
 - `PlayerTimeline.getSegment(mainTimeline, currentTime)`: in the current example this should resolve to segment `3`, so we reset `index` to `3`
 - `PlayerTimeline.getSegment(audioTimeline, currentTime)`: in the current example this should resolve to segment `6`, so we reset `index` to `6`
 
@@ -916,7 +916,13 @@ Once we loaded main and alternative audio playlist we should select segment to l
 
 ## HLS VOD (ABR Quality Switching)
 
-TBD
+When ABR switches quality, we don't have to replace buffer around the current time, users should continue watching existing quality and we silently update quality around buffered end. 
+
+In the following example, destination rendition group has different audio (different group-id), but subtitles and time stays the same, so no update is needed for them.
+
+Once we loaded main and alternative audio playlists we should select segment to load. We should not reset `index` and just transfer it as is to the destination rendition group timelines.
+
+![hls-vod-abr-quality-switching](./resources/hls-vod-abr-quality-switching.svg)
 
 ## HLS VOD (Seek out of buffer)
 
