@@ -214,7 +214,7 @@ The following existing public packages should be deprecated and archived after `
 | HLS SAMPLE-AES and SAMPLE-AES-CTR with KEYFORMAT="identity" | ❌             | COULD    | Key format "identity" is `ClearKey`. It is nice for testing EME flow, but does not provide an actual security.                                                                                                                   | [hls-clearKey](#hls-clearkey)                                               |
 | HLS Variable Substitution                                   | ❌             | MUST     | N/A                                                                                                                                                                                                                              | [hls-variable-substitution](#hls-variable-substitution)                     |
 | HLS Interstitial                                            | ❌             | COULD    | Content producers can insert separate interstitial content into their primary presentations in order to display advertising, branding, or other information to viewers. It is implemented via EXT-X-DATERANGE.                   | [hls-interstitial](#hls-interstitial)                                       |
-| HLS Trick Play                                              | ❌             | COULD    | Trick play can be implemented via Ext-x-iframes-only playlists.                                                                                                                                                                  | [hls-trick-play](#hls-trick-play)                                           |
+| HLS Trick Play                                              | ❌             | SHOULD   | Trick play can be implemented via Ext-x-iframes-only playlists.                                                                                                                                                                  | [hls-trick-play](#hls-trick-play)                                           |
 | HLS In-manifest thumbnails (ext-x-iframes-only)             | ❌             | SHOULD   | In-manifest support via Ext-x-iframes-only playlists with mjpg codec.                                                                                                                                                            | [hls-in-manifest-thumbnails-i-frames](#hls-in-manifest-thumbnails-i-frames) |
 | HLS In-manifest thumbnails (roku)                           | ❌             | COULD    | It is unofficial spec, but nice to have.                                                                                                                                                                                         | [hls-in-manifest-thumbnails-roku](#hls-in-manifest-thumbnails-roku)         |
 | HLS Session Data                                            | ❌             | SHOULD   | N/A                                                                                                                                                                                                                              | [hls-session-data](#hls-session-data)                                       |
@@ -233,7 +233,7 @@ The following existing public packages should be deprecated and archived after `
 | DASH In-manifest timed Metadata                             | ✅             | MUST     | via EventStream                                                                                                                                                                                                                  | [dash-in-manifest-timed-metadata](#dash-in-manifest-timed-metadata)         |
 | DASH MPD-Chaining                                           | ❌             | COULD    | MPD chaining provides a mechanism to indicate that, at the end of one Media Presentation, a new Media Presentation starts.                                                                                                       | [dash-mpd-chaining](#dash-mpd-chaining)                                     |
 | DASH Low Latency                                            | ❌             | SHOULD   | N/A                                                                                                                                                                                                                              | [dash-low-latency](#dash-low-latency)                                       |
-| DASH Trick Play                                             | ❌             | COULD    | N/A                                                                                                                                                                                                                              | [dash-trick-play](#dash-trick-play)                                         |
+| DASH Trick Play                                             | ❌             | SHOULD   | N/A                                                                                                                                                                                                                              | [dash-trick-play](#dash-trick-play)                                         |
 | DASH In-manifest thumbnails                                 | ❌             | SHOULD   | N/A                                                                                                                                                                                                                              | [dash-in-manifest-thumbnails](#dash-in-manifest-thumbnails)                 |
 | **DRM**                                                     |               |          |                                                                                                                                                                                                                                  |                                                                             |
 | Widevine                                                    | ✅             | MUST     | N/A                                                                                                                                                                                                                              | [drm](#drm)                                                                 |
@@ -636,7 +636,7 @@ interface Service<T, C> {
 }
 
 interface ServiceLocator {
-  // Each service should have 2 possible methods withing service locator: get, replace. Examples:
+  // Each service should have 2 possible methods within service locator: get, replace. Examples:
   
   // ...
   
@@ -868,45 +868,44 @@ The `Main Timeline` reflects the `main` playlist (ext-x-stream-inf, which could 
 
 `Image Timeline` reflects the image playlist (ext-x-image-stream-inf) or (ext-x-iframe-stream-inf)
 
-
 Once a user loads a source, we group renditions into Rendition Groups and select the appropriate rendition group by initial bandwidth. Once the main media playlist is loaded, we should create a `PlayerTimeline`. We should select the first segments to load based on `Start Time` and update the `index`.
 
 ![hls-vod-load-timelines](./resources/hls-vod-load-timelines.svg)
 
 ## HLS VOD (Continuous loading within one rendition group)
 
-`BufferBehind` is configurable value of seconds to keep in the buffer behind the play head. Everything else will be removed from the buffer.
+`BufferBehind` is a configurable value in seconds to keep in the buffer behind the playhead. Everything else will be removed from the buffer.
 
-`BufferAhead` is configurable value of seconds to buffer ahead of the play head. (buffer goal).
+`BufferAhead` is a configurable value in seconds to buffer ahead of the play head. (buffer goal).
 
-In the following example we're continuously loading segments within one rendition group. 
-- We select next segment using `++index` approach.
-- We should use `buffered.end` as a start pts/dts for next segment.
-- We don't care about discontinuities or rollover since we override original timestamps, but we still have to reset parsers that may have in-memory data and can parse through multiple segments (such as cea-608/708).
+In the following example, we continuously load segments within one rendition group.
+- We select the next segment using the `++index` approach.
+- We should use `buffered.end` as a start pts/dts for the next segment.
+- We don't care about discontinuities or rollover since we override original timestamps. However, we still have to reset parsers that may have in-memory data and can parse through multiple segments (such as cea-608/708).
 
 So, In this particular example:
 
-`MainTimeline` buffered segment 2 and 3. Both are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segment 4 and 5 to cover `BufferAhead`.
+`MainTimeline` buffered segments 2 and 3. Both are covered with `BufferBehind,` so there is no segment to remove from the buffer. We still have to load segments 4 and 5 to cover `BufferAhead`.
 
-`AudioTimeline` buffered 3,4,5,6 and 7. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 8, 9, 10 to cover `BufferAhead`.
+`AudioTimeline` buffered segments 3, 4, 5, 6, and 7. All are covered with `BufferBehind,` so there is no segment to remove from the buffer. We still have to load segments 8, 9, and 10 to cover `BufferAhead`.
 
-`TextTimeline` buffered 5,6,7,8,9,10,11,12 and 13. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 14,15,16,17,28,19 to cover `BufferAhead`.
+`TextTimeline` buffered 5,6,7,8,9,10,11,12, and 13. All are covered with `BufferBehind,` so there is no segment to remove from the buffer. We still have to load segments 14,15,16,17,28,19 to cover `BufferAhead`.
 
-`Image Timeline` buffered 1 and 2. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 3 to cover `BufferAhead`.
+`Image Timeline` buffered 1 and 2. All are covered with `BufferBehind,` so there is no segment to remove from the buffer. We still have to load segments 3 to cover `BufferAhead`.
 
-if user paused player it should not pause loading segment (till buffer goal is reached), unless explicitly specified in the player's configuration (`stopLoadingSegmentsWhenPaused`)
+If a user pauses the player, it should not pause segment loading (till the buffer goal is reached) unless explicitly specified in the player's configuration (`stopLoadingSegmentsWhenPaused`)
 
 ![hls-vod-continuous-loading-within-one-rendition-group](./resources/hls-vod-continuous-loading-within-one-rendition-group.svg)
 
 ## HLS VOD (Manual Quality Switching)
 
-Each `RenditionGroup` implements `transition` method, which expects destination rendition group and transition reason.
+Each `RenditionGroup` implements a `transition` method, which expects a destination rendition group and transition reason.
 
-When user manually switches quality, we have to replace buffer around the current time (user should see instant quality update).
+When a user manually switches quality, we have to replace the buffer around the current time (the user should see an instant quality update).
 
-In the following example, destination rendition group has different audio (different group-id), so we have to reset audio buffer as well. But it has the same group-id for subtitles and image timeline always stays the same, so we don't have to clear them.
+In the following example, the destination rendition group has different audio (different group ID), so we have to reset the audio buffer as well. However, it has the same group ID for subtitles, and the image timeline always stays the same, so we don't have to clear them.
 
-Once we loaded main and alternative audio playlists we should select segment to load. We should use the same algorithm we used for the first load: 
+Once we loaded the main and alternative audio playlists, we should select the segments to load. We should use the same algorithm we used for the first load:
 - `PlayerTimeline.getSegment(mainTimeline, currentTime)`: in the current example this should resolve to segment `3`, so we reset `index` to `3`
 - `PlayerTimeline.getSegment(audioTimeline, currentTime)`: in the current example this should resolve to segment `6`, so we reset `index` to `6`
 
@@ -914,11 +913,11 @@ Once we loaded main and alternative audio playlists we should select segment to 
 
 ## HLS VOD (ABR Quality Switching)
 
-When ABR switches quality, we don't have to replace buffer around the current time, users should continue watching existing quality and we silently update quality around buffered end. 
+When ABR switches quality, we don't have to replace the buffer at the current time. Users should continue watching the existing quality without interruptions, and we should seamlessly update the quality around the buffered end.
 
-In the following example, destination rendition group has different audio (different group-id), but subtitles and time stays the same, so no update is needed for them.
+In the following example, the destination rendition group has different audio (different group ID), but the subtitles and time stay the same, so no update is needed for them.
 
-Once we loaded main and alternative audio playlists we should select segment to load. We should not reset `index` and just transfer it as is to the destination rendition group timelines.
+Once we load the main and alternative audio playlists, we should select a segment to load. We should not reset the `index` and just transfer it as is to the destination rendition group timelines.
 
 ![hls-vod-abr-quality-switching](./resources/hls-vod-abr-quality-switching.svg)
 
@@ -989,7 +988,7 @@ TBD
 # References
 
 
-> ⚠️ **Note**
+> [!IMPORTANT]
 >
 > DASH references may contain both spec and dash-if IP links.
 > 
