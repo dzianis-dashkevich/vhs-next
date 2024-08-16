@@ -143,7 +143,7 @@ https://github.com/videojs/web-media-box
 >
 > The actual packages are `@videojs/*` scoped.
 >
-> We can rename it to any other name (eg: `videojs-monorepo`) or keep existing name.
+> We can rename it to any other name (eg: `videojs-monorepo`) or keep the existing name.
 
 Here is monorepo structure example:
 
@@ -165,7 +165,6 @@ Here is monorepo structure example:
 ```
 
 As you can see from this structure, videojs scoped monorepo will have 2 main repositories:
-`@videojs/playback` and `@videojs/ui` and a bunch of additional libraries that can be used as standalone libs + videojs related apps.
 
 `@videojs/playback` is a standalone player that handles playback and does not support UI. (Similar to hls.js and dash.js).
 
@@ -175,7 +174,7 @@ This way we cover both groups of developers:
 - Developers who want to build their own player's UI on top of `@videojs/playback`
 - Developers who want embedded player experience
 
-This documents covers only `@videojs/playback` and other playback-related utility packages.
+This document covers only `@videojs/playback` and other playback-related utility packages.
 
 The following existing public packages should be deprecated and archived after `@videojs/playback` is fully developed:
 - https://github.com/videojs/http-streaming
