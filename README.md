@@ -861,6 +861,66 @@ TBD
 
 TBD
 
+## HLS Live (load)
+
+TBD
+
+## HLS Live (Continuous loading within one rendition group)
+
+TBD
+
+## HLS Live (Manual Quality Switching)
+
+TBD
+
+## HLS Live (ABR Quality Switching)
+
+TBD
+
+## HLS Live (Seek out of buffer)
+
+TBD
+
+## DASH VOD (load)
+
+TBD
+
+## DASH VOD (Continuous loading within one rendition group)
+
+TBD
+
+## DASH VOD (Manual Quality Switching)
+
+TBD
+
+## DASH VOD (ABR Quality Switching)
+
+TBD
+
+## DASH VOD (Seek out of buffer)
+
+TBD
+
+## DASH Live (load)
+
+TBD
+
+## DASH Live (Continuous loading within one rendition group)
+
+TBD
+
+## DASH Live (Manual Quality Switching)
+
+TBD
+
+## DASH Live (ABR Quality Switching)
+
+TBD
+
+## DASH Live (Seek out of buffer)
+
+TBD
+
 # References
 
 
