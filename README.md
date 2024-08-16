@@ -846,30 +846,30 @@ interface AsyncInterceptorTypeToPayloadMap {
 
 ## Applicable for each scenario
 
-- We should always demux main with audio and video. This will help us with switching alternative audio without reloading the whole video part.
-- We should always override original timestamps according to player's timeline. This will help us with cases when we have to re-calculate timestampOffset during discontinuities or switching between representation with and without rollovers. This will also help us with avoiding gaps.
-- We should always use index-based approach when continuously loading segments within one rendition group. We should use buffered.end as a start pts/dts for the next segment to load.
+- We should always demux the main with audio and video. This will help us switch alternative audio without reloading the whole video part.
+- We should always override original timestamps according to the player's timeline. This should significantly simplify time calculations and reduce sync issues between rendition switches with rollovers and discontinuities.
+- We should always use an index-based approach when continuously loading segments within one rendition group. We should use buffered.end as a start pts/dts for the next segment to load.
 
 ## HLS VOD (load)
 
-Let's assume we have VOD stream with main (as video), alternative audio, subtitles and images (thumbnails or trick-play).
+Let's assume we have a VOD stream with the main (as video), alternative audio, subtitles, and images (thumbnails or trick-play).
 
-I added discontinuities and rollovers to cover complex example:
+I added discontinuities and rollovers to cover complex examples:
 
-`Player Timeline` is built based on the first `main` occurrence. This timeline should reflect what user see on UI.
+The `Player Timeline` is built based on the first `main` occurrence. This timeline should reflect what users see on the UI.
 
 `Start Time` is the value provided by the client during load (default value is `0`).
 
-`Main Timeline` reflects `main` playlist. (ext-x-stream-inf, could be `video+audio`, `video-only` or `audio-only`).
+The `Main Timeline` reflects the `main` playlist (ext-x-stream-inf, which could be `video+audio`, `video-only`, or `audio-only`).
 
 `Audio Timeline` reflects alternative audio playlist (ext-x-media, type="audio") or demuxed audio from `main`.
 
 `Text Timeline` reflects subtitles playlist (ext-x-media, type="subtitles"") or closed-captions (cea-608/708).
 
-`Image Timeline` reflects image playlist (ext-x-image-stream-inf) or (ext-x-iframe-stream-inf)
+`Image Timeline` reflects the image playlist (ext-x-image-stream-inf) or (ext-x-iframe-stream-inf)
 
 
-Once user loaded a source, we group renditions into Renditions Groups, select appropriate rendition group by initial bandwidth. Once main media playlist is loaded we should create a `PlayerTimeline`. We should select first segments to load based on `Start Time` and update `index`.
+Once a user loads a source, we group renditions into Rendition Groups and select the appropriate rendition group by initial bandwidth. Once the main media playlist is loaded, we should create a `PlayerTimeline`. We should select the first segments to load based on `Start Time` and update the `index`.
 
 ![hls-vod-load-timelines](./resources/hls-vod-load-timelines.svg)
 
