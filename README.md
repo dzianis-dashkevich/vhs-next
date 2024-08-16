@@ -2,6 +2,9 @@
 
 * [Summary](#summary)
 * [Motivation](#motivation)
+    * [Maintenance Complexity](#maintenance-complexity)
+    * [Troubleshooting Complexity](#troubleshooting-complexity-)
+    * [API limitations](#api-limitations)
 * [Monorepo Structure](#monorepo-structure)
 * [Functional Requirements](#functional-requirements)
 * [Non-Functional Requirements and DX](#non-functional-requirements-and-dx)
@@ -93,44 +96,39 @@
 
 # Summary
 
-This documents describes a high level solution design for the VHS-Next (videojs playback engine) project.
+This document describes high-level requirements, API, and scenario examples for the VHS-Next (videojs playback engine) project.
 
-This project is as a pre-requisite for a massive videojs 9 update.
+This project is a pre-requisite for a massive videojs `9` update.
 
 # Motivation
 
-The current playback engine (VHS and it's ecosystem: m3u8-parser, mpd-parser, mux.js, contrib-eme, etc...) has reached a critical point where it's issues significantly impede both maintenance and innovation.
+The current playback engine (VHS and its ecosystem: `m3u8-parser`, `mpd-parser`, `mux.js`, `contrib-eme`, etc...) has reached a critical point where its issues significantly impede both maintenance and innovation.
 
 These challenges have escalated the effort required to support and enhance the existing codebase.
 
 Several key factors underscore the necessity for a new playback engine:
 
-**Maintenance Complexity**: 
+### Maintenance Complexity
 
 Over time, its core architecture has revealed several fundamental limitations, which have manifested as frequent bugs and performance inefficiencies. 
 
-Fixing one issue often leads to the emergence of new problems, creating a cycle of reactive maintenance that is unsustainable.
+Fixing one issue often leads to the emergence of new problems, creating an unsustainable cycle of reactive maintenance.
 
-**Troubleshooting Complexity**: 
+### Troubleshooting Complexity 
 
-Unpredictable data flow made it increasingly difficult to troubleshoot playback engine.
+Unpredictable data flow made it increasingly difficult to troubleshoot the playback engine.
 
-**Performance**: 
+### API limitations
 
-The current engine struggles to meet the performance demands of modern video applications, especially in the complex scenarios.
-
-**API limitations**:
-
-- The current playback engine is highly coupled with videojs itself and can't be used as a standalone player in case users what only playback engine abstraction without UI.
-- The current playback engine does not provide a robust events api to monitor and get a clear picture of the data flow.
-- The current playback engine does not provide a robust errors api, and it is very hard to diagnose and narrow issues.
-- The current playback engine provides very limited interceptors api
-- The current playback engine provides very limited configuration api
+- The current playback engine is highly coupled with videojs and can't be used as a standalone player. There are many use cases where users want to build their own UI on top of the playback engine.
+- The current playback engine does not provide a robust events API for monitoring and obtaining a clear picture of the data flow.
+- The current playback engine does not provide a robust Errors API, making diagnosing and narrowing issues difficult.
+- The current playback engine provides very limited interceptors API.
+- The current playback engine provides very limited configuration API.
 
 To address these (and many other) issues comprehensively, we propose the introduction of a new playback engine designed with modern principles and technologies.
 
-This new engine will not only resolve the current deficiencies but also provide a scalable foundation for future enhancements.
-
+This new engine will resolve the current deficiencies and provide a scalable foundation for future enhancements.
 
 # Monorepo Structure
 
