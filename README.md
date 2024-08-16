@@ -168,7 +168,7 @@ As you can see from this structure, videojs scoped monorepo will have 2 main rep
 
 `@videojs/playback` is a standalone player that handles playback and does not support UI. (Similar to hls.js and dash.js).
 
-`@videojs/ui` is a standalone UI player that uses `@videojs/playback` under the hood and provides a lot of UI WebComponents to customize your player. (Something similar to https://www.vidstack.io/)
+`@videojs/ui` is a standalone UI player that uses `@videojs/playback` under the hood and provides a lot of UI WebComponents to customize your player. (Something similar to https://www.vidstack.io/ or https://www.media-chrome.org/)
 
 This way we cover both groups of developers:
 - Developers who want to build their own player's UI on top of `@videojs/playback`
@@ -326,7 +326,7 @@ This section describes entities, their relationship and boundaries with possible
 
 ## Player (Facade)
 
-Player facade is a main API gateway for almost all features provided by our playback engine. The main purpose is to simplify client's usage and hide complexity.
+The player facade is the main API gateway for almost all features provided by our playback engine. Its main purpose is to simplify client usage and hide complexity.
 
 ```ts
 type EventHandler<T> = (event: T) => void;
@@ -532,14 +532,14 @@ interface Player {
 
 ## ServiceLocator
 
-ServiceLocator is a main entity to locate and update services.
+ServiceLocator is the main entity that locates and updates services.
 
-By default, player should have very limited functionality and support only native playback. ServiceLocator is initialized with fallback service.
+By default, player should have very limited functionality and support only native playback. ServiceLocator is initialized with fallback services.
 
 ServiceLocator provides 3 main features:
-- Build your own player. (Replace default fallbacks with default "our" implementations)
-- Customize ANY service. (Replace default fallback or default "our" implementations with your own implementations)
-- Access to ANY service. (Player and other services will use service locator to access other services. Clients can also use service locator to access any service)
+- Build your own player. (Replace default fallbacks with implementations provided by us)
+- Customize ANY service. (Replace default fallback or implementation provided by us with your own implementations)
+- Access to ANY service. (ServiceLocator allows access to any available service)
 
 
 ### Usage Example 1 (Access Service and use it)
@@ -583,7 +583,7 @@ import { Player } from '@videojs/playback';
 // could be extensions from our implementations 
 // or completely independent implementations (It should not necessarily be a class. it could be an object with properties.)
 // It does not matter.
-// All we care about is that provided implementation conforms with the expected interface.
+// All we care about is that the provided implementation conforms with the expected interface.
 
 const player = new Player();
 const serviceLocator = player.getServiceLocator();
@@ -667,7 +667,7 @@ interface ServiceLocator {
 
 ## PipelineProvider
 
-Pipeline provider allows registering custom pipelines for specific mimeTypes. Player will use it during load.
+Pipeline provider allows registering custom pipelines for specific mimeTypes. The player will use it during load.
 
 ```ts
 interface PipelineProvider {
@@ -682,8 +682,8 @@ interface PipelineProvider {
 
 ## AbrManager
 
-AbrManager should control adaptation sets switching based on the registered abr rules.
-we should provide default EWMA rule.
+AbrManager should control adaptation sets switching based on the registered ABR rules.
+we should provide the default EWMA rule.
 
 ```ts
 interface AbrManager {
@@ -698,10 +698,10 @@ interface AbrManager {
 
 ## NetworkingManager
 
-NetworkingManager is a high level abstraction over browser's fetch API. 
-- Must support Streams API to stream chunks of data from the network. 
-- Must execute interceptors for `InterceptorType.NetworkRequestStart` to modify request payload, `InterceptorType.NetworkRequestComplete` to modify response payload, `InterceptorType.NetworkRequestFailed` to modify failed response payload.
-- Must trigger `Event.NetworkRequestStart`, `Event.NetworkRequestComplete`, `Event.NetworkRequestFailed` events with corresponding event payloads.
+NetworkingManager is a high level abstraction over browser's fetch or XHR API.
+- Should support Streams API to stream chunks of data from the network. (where possible)
+- Should execute interceptors for `InterceptorType.NetworkRequestStart` to modify request payload, `InterceptorType.NetworkRequestComplete` to modify response payload, `InterceptorType.NetworkRequestFailed` to modify failed response payload.
+- Should trigger `Event.NetworkRequestStart`, `Event.NetworkRequestComplete`, `Event.NetworkRequestFailed` events with corresponding event payloads.
 
 ```ts
 
