@@ -300,7 +300,7 @@ The following existing public packages should be deprecated and archived after `
 | Tizen (Chromium)    | N/A          | N/A            | N/A          | N/A          | N/A            | N/A            | >= Tizen 6.x (2021, Chromium 76)    |
 | WebOS TV (Chromium) | N/A          | N/A            | N/A          | N/A          | N/A            | N/A            | >= WebOS TV 6.x (2021, Chromium 79) |
 
-> ⚠️ **Note**
+> [!IMPORTANT]
 > 
 > iOS < 17.1 does not support MSE so only native playback is supported. iOS >= 17.1 supports MMSE (managed MSE)
 > 
@@ -310,7 +310,7 @@ The following existing public packages should be deprecated and archived after `
 
 This section describes entities, their relationship and boundaries with possible API examples.
 
-> ⚠️ **Note**
+> [!WARNING]
 >
 > Entities APIs/Names/boundaries outlined in this document are not final.
 > 
