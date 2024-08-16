@@ -14,16 +14,33 @@
     * [Usage Example 2 (Build your own player)](#usage-example-2-build-your-own-player)
     * [Usage Example 3 (Use your own services, customizations)](#usage-example-3-use-your-own-services-customizations)
     * [Usage Example 4 (Transfer State)](#usage-example-4-transfer-state)
-    * [PipelineProvider](#pipelineprovider)
-    * [AbrManager](#abrmanager)
-    * [NetworkingManager](#networkingmanager)
-    * [Events API](#events-api)
-    * [Errors API](#errors-api)
+  * [PipelineProvider](#pipelineprovider)
+  * [AbrManager](#abrmanager)
+  * [NetworkingManager](#networkingmanager)
+  * [Events API](#events-api)
+  * [Errors API](#errors-api)
 * [Scenarios](#scenarios)
+  * [Applicable for each scenario](#applicable-for-each-scenario)
   * [HLS VOD (load)](#hls-vod-load)
-  * [HLS VOD (Manual Quality Switch)](#hls-vod-manual-quality-switch)
-  * [HLS VOD (ABR Quality Switch)](#hls-vod-abr-quality-switch)
+  * [HLS VOD (Continuous loading within one rendition group)](#hls-vod-continuous-loading-within-one-rendition-group)
+  * [HLS VOD (Manual Quality Switching)](#hls-vod-manual-quality-switching)
+  * [HLS VOD (ABR Quality Switching)](#hls-vod-abr-quality-switching)
   * [HLS VOD (Seek out of buffer)](#hls-vod-seek-out-of-buffer)
+  * [HLS Live (load)](#hls-live-load)
+  * [HLS Live (Continuous loading within one rendition group)](#hls-live-continuous-loading-within-one-rendition-group)
+  * [HLS Live (Manual Quality Switching)](#hls-live-manual-quality-switching)
+  * [HLS Live (ABR Quality Switching)](#hls-live-abr-quality-switching)
+  * [HLS Live (Seek out of buffer)](#hls-live-seek-out-of-buffer)
+  * [DASH VOD (load)](#dash-vod-load)
+  * [DASH VOD (Continuous loading within one rendition group)](#dash-vod-continuous-loading-within-one-rendition-group)
+  * [DASH VOD (Manual Quality Switching)](#dash-vod-manual-quality-switching)
+  * [DASH VOD (ABR Quality Switching)](#dash-vod-abr-quality-switching)
+  * [DASH VOD (Seek out of buffer)](#dash-vod-seek-out-of-buffer)
+  * [DASH Live (load)](#dash-live-load)
+  * [DASH Live (Continuous loading within one rendition group)](#dash-live-continuous-loading-within-one-rendition-group)
+  * [DASH Live (Manual Quality Switching)](#dash-live-manual-quality-switching)
+  * [DASH Live (ABR Quality Switching)](#dash-live-abr-quality-switching)
+  * [DASH Live (Seek out of buffer)](#dash-live-seek-out-of-buffer)
 * [References](#references)
     * [HLS Key Rotation](#hls-key-rotation)
     * [HLS Server Control](#hls-server-control)
@@ -650,7 +667,7 @@ interface ServiceLocator {
 
 ```
 
-### PipelineProvider
+## PipelineProvider
 
 Pipeline provider allows registering custom pipelines for specific mimeTypes. Player will use it during load.
 
@@ -665,7 +682,7 @@ interface PipelineProvider {
 }
 ```
 
-### AbrManager
+## AbrManager
 
 AbrManager should control adaptation sets switching based on the registered abr rules.
 we should provide default EWMA rule.
@@ -681,7 +698,7 @@ interface AbrManager {
 }
 ```
 
-### NetworkingManager
+## NetworkingManager
 
 NetworkingManager is a high level abstraction over browser's fetch API. 
 - Must support Streams API to stream chunks of data from the network. 
@@ -736,7 +753,7 @@ interface NetworkingConfiguration {
 
 ```
 
-### Events API
+## Events API
 
 ```ts
 // Events API
@@ -768,7 +785,7 @@ class PlayerErrorEvent extends PlayerEvent {
 }
 ```
 
-### Errors API
+## Errors API
 
 ```ts
 // Errors API
