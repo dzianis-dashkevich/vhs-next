@@ -871,7 +871,7 @@ I added discontinuities and rollovers to cover complex example:
 `Image Timeline` reflects image playlist (ext-x-image-stream-inf) or (ext-x-iframe-stream-inf)
 
 
-Once user loaded a source, we group renditions into Renditions Groups, select appropriate rendition group by initial bandwidth. Once main media playlist is loaded we should create a `PlayerTimeline`. We should select first segments to load based on `Start Time`.
+Once user loaded a source, we group renditions into Renditions Groups, select appropriate rendition group by initial bandwidth. Once main media playlist is loaded we should create a `PlayerTimeline`. We should select first segments to load based on `Start Time` and update `index`.
 
 ![hls-vod-load-timelines](./resources/hls-vod-load-timelines.svg)
 
@@ -890,9 +890,9 @@ So, In this particular example:
 
 `MainTimeline` buffered segment 2 and 3. Both are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segment 4 and 5 to cover `BufferAhead`.
 
-`AudioTimeline` buffered 3, 4 and 5. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 6, 7, 8, 9, 10 to cover `BufferAhead`.
+`AudioTimeline` buffered 3,4,5,6 and 7. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 8, 9, 10 to cover `BufferAhead`.
 
-`TextTimeline` buffered 5,6,7,8,9,10,11. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 12,13,14,15,16,17,28,19 to cover `BufferAhead`.
+`TextTimeline` buffered 5,6,7,8,9,10,11,12 and 13. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 14,15,16,17,28,19 to cover `BufferAhead`.
 
 `Image Timeline` buffered 1 and 2. All are covered with `BufferBehind` so no segment to remove from the buffer. We still have to load segments 3 to cover `BufferAhead`.
 
@@ -909,8 +909,8 @@ When user manually switching quality, we have to replace buffer around the curre
 In the following example, destination rendition group has different audio (different group-id), so we have to reset audio buffer as well. But it has the same group-id for subtitles and image timeline always stays the same, so we don't have to clear them.
 
 Once we loaded main and alternative audio playlist we should select segment to load. We should use the same algorithm we used for the first load: 
-- `PlayerTimeline.getSegment(mainTimeline, currentTime)`: in the current example this should resolve to segment `3`
-- `PlayerTimeline.getSegment(audioTimeline, currentTime)`: in the current example this should resolve to segment `6`
+- `PlayerTimeline.getSegment(mainTimeline, currentTime)`: in the current example this should resolve to segment `3`, so we reset `index` to `3`
+- `PlayerTimeline.getSegment(audioTimeline, currentTime)`: in the current example this should resolve to segment `6`, so we reset `index` to `6`
 
 ![hls-vod-manual-quality-switching](./resources/hls-vod-manual-quality-switching.svg)
 
